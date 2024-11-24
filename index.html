@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>QuickScribe - תמלול אודיו חכם</title>
+    <title>AITexter - תמלול אודיו חכם</title>
     <!-- גופנים ואייקונים -->
     <link
       href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700&display=swap"
@@ -19,16 +19,19 @@
   <body>
     <!-- סרגל עליון -->
     <header>
-      <div class="logo">QuickScribe</div>
+      <div class="logo">AITexter</div>
       <nav>
         <ul>
-          <li><a href="#">תמלול</a></li>
-          <li><a href="#">תרגום</a></li>
-          <li><a href="#">היסטוריה</a></li>
+          <li><a href="#" onclick="showSection('transcribe')">תמלול</a></li>
+          <li><a href="#" onclick="showSection('translate')">תרגום</a></li>
+          <li><a href="#" onclick="showSection('history')">היסטוריה</a></li>
           <li><a href="#" onclick="showPopup('settingsPopup')">הגדרות</a></li>
-          <li><a href="#">שיתוף</a></li>
+          <li><a href="#" onclick="shareApp()">שיתוף</a></li>
           <li><a href="#" onclick="showPopup('helpPopup')">עזרה</a></li>
         </ul>
+        <div class="menu-toggle" onclick="toggleMenu()">
+          <i class="fas fa-bars"></i>
+        </div>
       </nav>
     </header>
 
@@ -72,7 +75,7 @@
         <h2>הגדרות</h2>
         <!-- תוכן ההגדרות -->
         <button class="close-button" onclick="closePopup('settingsPopup')">
-          סגור
+          <i class="fas fa-times"></i>
         </button>
       </div>
     </div>
@@ -82,7 +85,9 @@
       <div class="popup-content">
         <h2>עזרה</h2>
         <!-- תוכן העזרה -->
-        <button class="close-button" onclick="closePopup('helpPopup')">סגור</button>
+        <button class="close-button" onclick="closePopup('helpPopup')">
+          <i class="fas fa-times"></i>
+        </button>
       </div>
     </div>
 
