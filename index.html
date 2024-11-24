@@ -2,7 +2,14 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <meta
+      name="description"
+      content="AITexter - Smart Audio Transcription"
+    />
     <title>AITexter - Smart Audio Transcription</title>
     <!-- Fonts and Icons -->
     <link
@@ -57,12 +64,18 @@
           <h2>Start Recording or Upload an Audio File</h2>
           <!-- Audio Source Buttons -->
           <div class="audio-source-buttons">
-            <button class="action-button" onclick="showPopup('audioInputPopup')">
+            <button
+              class="action-button"
+              onclick="showPopup('audioInputPopup')"
+            >
               <i class="fas fa-upload"></i> Choose Audio Source
             </button>
           </div>
           <!-- Transcription Display Area -->
-          <div class="transcription-display" id="transcriptionDisplay">
+          <div
+            class="transcription-display"
+            id="transcriptionDisplay"
+          >
             <!-- Transcription will appear here -->
           </div>
         </div>
@@ -88,45 +101,77 @@
 
         <!-- Additional Buttons -->
         <div class="additional-buttons">
-          <button class="action-button" onclick="copyToClipboard()">
+          <button
+            class="action-button"
+            onclick="copyToClipboard()"
+          >
             <i class="fas fa-copy"></i> Copy
           </button>
-          <button class="action-button" onclick="downloadFile()">
+          <button
+            class="action-button"
+            onclick="downloadFile()"
+          >
             <i class="fas fa-download"></i> Download
           </button>
-          <button class="action-button" onclick="summarizeTranscription()">
+          <button
+            class="action-button"
+            onclick="summarizeTranscription()"
+          >
             <i class="fas fa-compress-alt"></i> Summarize
           </button>
           <!-- New Button for Translation -->
-          <button class="action-button" onclick="translateTranscription()">
+          <button
+            class="action-button"
+            onclick="translateTranscription()"
+          >
             <i class="fas fa-globe"></i> Translate
           </button>
         </div>
 
         <!-- Progress and Messages Area -->
         <div id="loader" class="loader"></div>
-        <div class="progress-container" id="progressContainer">
+        <div
+          class="progress-container"
+          id="progressContainer"
+        >
           <div class="progress-bar">
-            <div class="progress-fill" id="progressFill"></div>
+            <div
+              class="progress-fill"
+              id="progressFill"
+            ></div>
           </div>
-          <div class="progress-text" id="progressText">0%</div>
+          <div class="progress-text" id="progressText">
+            0%
+          </div>
         </div>
 
         <!-- Transcription Tabs -->
         <div class="card transcription-card">
           <div class="tab-buttons">
-            <button class="tab-button active" onclick="showTab('srt')">
+            <button
+              class="tab-button active"
+              onclick="showTab('srt')"
+            >
               SRT
             </button>
-            <button class="tab-button" onclick="showTab('plainText')">
+            <button
+              class="tab-button"
+              onclick="showTab('plainText')"
+            >
               Plain Text
             </button>
           </div>
-          <div id="srtContent" class="tab-content active">
+          <div
+            id="srtContent"
+            class="tab-content active"
+          >
             <div class="transcription-container">
               <div id="srtTranscription"></div>
               <div class="transcription-fade"></div>
-              <button class="expand-button" onclick="toggleTranscription(this)">
+              <button
+                class="expand-button"
+                onclick="toggleTranscription(this)"
+              >
                 Show More
               </button>
             </div>
@@ -135,7 +180,10 @@
             <div class="transcription-container">
               <div id="plainTextTranscription"></div>
               <div class="transcription-fade"></div>
-              <button class="expand-button" onclick="toggleTranscription(this)">
+              <button
+                class="expand-button"
+                onclick="toggleTranscription(this)"
+              >
                 Show More
               </button>
             </div>
@@ -160,18 +208,235 @@
           <!-- Add more languages as needed -->
         </select>
         <div class="popup-footer">
-          <button class="control-button" onclick="saveLanguageSelection()">
+          <button
+            class="control-button"
+            onclick="saveLanguageSelection()"
+          >
             Save
           </button>
-          <button class="control-button" onclick="closePopup('languagePopup')">
+          <button
+            class="control-button"
+            onclick="closePopup('languagePopup')"
+          >
             Cancel
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Other Popups (API Key, Settings, Help, etc.) -->
-    <!-- ... (No changes in these popups) -->
+    <!-- Popup for API Key -->
+    <div id="apiKeyPopup" class="popup">
+      <div class="popup-content">
+        <h2>Set API Key</h2>
+        <input
+          type="text"
+          id="apiKeyInput"
+          placeholder="Enter your API Key"
+        />
+        <div class="popup-footer">
+          <button
+            class="control-button"
+            onclick="saveApiKey()"
+          >
+            Save
+          </button>
+          <button
+            class="control-button"
+            onclick="closePopup('apiKeyPopup')"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Popup for Audio Input -->
+    <div id="audioInputPopup" class="popup">
+      <div class="popup-content">
+        <h2>Choose Audio Source</h2>
+        <div class="tab-buttons">
+          <button
+            class="tab-button active"
+            onclick="showAudioTab('file')"
+          >
+            Upload File
+          </button>
+          <button
+            class="tab-button"
+            onclick="showAudioTab('record')"
+          >
+            Record
+          </button>
+        </div>
+        <div
+          id="fileInputTab"
+          class="tab-content active"
+        >
+          <input
+            type="file"
+            id="audioFile"
+            accept="audio/*"
+            onchange="handleFileSelect(event)"
+          />
+          <!-- Retention Time Selection -->
+          <div style="margin-top: 15px;">
+            <label for="fileRetention"
+              >File Retention Duration:</label
+            >
+            <select id="fileRetention">
+              <option value="0">Do not save</option>
+              <option value="1">1 hour</option>
+              <option value="2" selected>2 hours</option>
+              <option value="6">6 hours</option>
+              <option value="12">12 hours</option>
+              <option value="24">24 hours</option>
+            </select>
+          </div>
+        </div>
+        <div id="recordInputTab" class="tab-content">
+          <button
+            id="recordButton"
+            class="control-button"
+            onclick="toggleRecording()"
+          >
+            <i class="fas fa-microphone"></i> Start Recording
+          </button>
+          <div
+            id="recordingStatus"
+            style="display: none"
+          >
+            <p>Recording is ready</p>
+            <button
+              class="control-button"
+              onclick="deleteRecording()"
+            >
+              Delete Recording
+            </button>
+          </div>
+          <!-- Retention Time Selection -->
+          <div style="margin-top: 15px;">
+            <label for="recordRetention"
+              >File Retention Duration:</label
+            >
+            <select id="recordRetention">
+              <option value="0">Do not save</option>
+              <option value="1">1 hour</option>
+              <option value="2" selected>2 hours</option>
+              <option value="6">6 hours</option>
+              <option value="12">12 hours</option>
+              <option value="24">24 hours</option>
+            </select>
+          </div>
+        </div>
+        <div class="popup-footer">
+          <button
+            class="control-button"
+            onclick="confirmAudioInput()"
+          >
+            Confirm
+          </button>
+          <button
+            class="control-button"
+            onclick="closePopup('audioInputPopup')"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Popup for Settings -->
+    <div id="settingsPopup" class="popup">
+      <div class="popup-content">
+        <h2>Settings</h2>
+        <div style="margin-bottom: 15px;">
+          <label for="wordsPerSubtitle"
+            >Words per Subtitle:</label
+          >
+          <select id="wordsPerSubtitle">
+            <option value="4">4</option>
+            <option value="6">6</option>
+            <option value="8" selected>8</option>
+            <option value="10">10</option>
+            <option value="12">12</option>
+          </select>
+        </div>
+        <div class="popup-footer">
+          <button
+            class="control-button"
+            onclick="saveSettings()"
+          >
+            Save
+          </button>
+          <button
+            class="control-button"
+            onclick="closePopup('settingsPopup')"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Popup for Help -->
+    <div id="helpPopup" class="popup">
+      <div class="popup-content">
+        <h2>Help</h2>
+        <h3>How to obtain an API Key:</h3>
+        <ol>
+          <li>
+            Visit
+            <a
+              href="https://console.groq.com"
+              target="_blank"
+              >console.groq.com</a
+            >
+          </li>
+          <li>Sign up or log in to your account</li>
+          <li>Click on "Create API Key"</li>
+          <li>Copy the generated key</li>
+        </ol>
+        <h3>How to use the website:</h3>
+        <ol>
+          <li>Enter your API Key</li>
+          <li>Select an audio file or record directly</li>
+          <li>Choose the file retention duration</li>
+          <li>Click on "Start Transcription"</li>
+          <li>
+            Wait for the results and choose between SRT
+            format or plain text
+          </li>
+        </ol>
+        <button
+          class="close-button"
+          onclick="closePopup('helpPopup')"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Popup for Summary -->
+    <div id="summaryPopup" class="popup">
+      <div class="popup-content">
+        <h2>Transcription Summary</h2>
+        <div id="summaryContent"></div>
+        <div class="popup-footer">
+          <button
+            class="control-button"
+            onclick="downloadSummary()"
+          >
+            <i class="fas fa-download"></i> Download Summary
+          </button>
+          <button
+            class="control-button"
+            onclick="closePopup('summaryPopup')"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- External JavaScript File -->
     <script src="script.js"></script>
