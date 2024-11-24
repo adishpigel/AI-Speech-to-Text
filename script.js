@@ -8,11 +8,13 @@ let audioSource = null; // 'file' או 'record'
 let selectedFile = null;
 let selectedLanguage = ""; // שפה שנבחרה
 let accumulatedDuration = 0;
+let fileRetentionHours = 2; // ברירת מחדל - 2 שעות
 
 // טעינת ההגדרות בעת טעינת הדף
 document.addEventListener("DOMContentLoaded", () => {
   loadSettings();
   loadApiKey();
+  showPopup("welcomePopup"); // הצגת הודעת ברוכים הבאים
 });
 
 // פונקציות לפופאפים
@@ -44,6 +46,24 @@ function loadApiKey() {
   }
 }
 
+// פונקציות לבחירת שפה
+function saveLanguageSelection() {
+  selectedLanguage = document.getElementById("languageSelectMain").value;
+  localStorage.setItem("selectedLanguage", selectedLanguage);
+  updateTextDirection(selectedLanguage);
+  showMessage("השפה נשמרה בהצלחה!", "success");
+  closePopup("languagePopup");
+}
+
+function updateTextDirection(language) {
+  const htmlElement = document.documentElement;
+  if (language === "he" || language === "ar") {
+    htmlElement.dir = "rtl";
+  } else {
+    htmlElement.dir = "ltr";
+  }
+}
+
 // פונקציות לבחירת מקור אודיו
 function showAudioTab(tabName) {
   document
@@ -54,7 +74,9 @@ function showAudioTab(tabName) {
     .forEach((content) => content.classList.remove("active"));
 
   document
-    .querySelector(`#audioInputPopup .tab-button[onclick="showAudioTab('${tabName}')"]`)
+    .querySelector(
+      `#audioInputPopup .tab-button[onclick="showAudioTab('${tabName}')"]`
+    )
     .classList.add("active");
   document.getElementById(`${tabName}InputTab`).classList.add("active");
 
@@ -81,12 +103,20 @@ function confirmAudioInput() {
       showMessage("אנא בחר קובץ אודיו", "error");
       return;
     }
+    // קבלת זמן שמירת הקובץ
+    fileRetentionHours = parseInt(
+      document.getElementById("fileRetention").value
+    );
     showMessage(`נבחר קובץ: ${selectedFile.name}`, "success");
   } else if (audioSource === "record") {
     if (!audioBlob) {
       showMessage("אנא הקלט אודיו תחילה", "error");
       return;
     }
+    // קבלת זמן שמירת הקובץ
+    fileRetentionHours = parseInt(
+      document.getElementById("recordRetention").value
+    );
     showMessage("הקלטה נשמרה", "success");
   }
   closePopup("audioInputPopup");
@@ -98,12 +128,10 @@ function updateRecordingStatus() {
   const recordButton = document.getElementById("recordButton");
   if (audioBlob) {
     recordingStatus.style.display = "block";
-    recordButton.innerHTML =
-      '<i class="fas fa-microphone"></i> הקלט מחדש';
+    recordButton.innerHTML = '<i class="fas fa-microphone"></i> הקלט מחדש';
   } else {
     recordingStatus.style.display = "none";
-    recordButton.innerHTML =
-      '<i class="fas fa-microphone"></i> התחל הקלטה';
+    recordButton.innerHTML = '<i class="fas fa-microphone"></i> התחל הקלטה';
   }
 }
 
@@ -152,13 +180,8 @@ async function toggleRecording() {
 // פונקציות להגדרות
 function saveSettings() {
   const wordsPerSubtitle = document.getElementById("wordsPerSubtitle").value;
-  selectedLanguage = document.getElementById("languageSelect").value;
-
   localStorage.setItem("wordsPerSubtitle", wordsPerSubtitle);
-  localStorage.setItem("selectedLanguage", selectedLanguage);
-
-  updateTextDirection(selectedLanguage);
-
+  showMessage("ההגדרות נשמרו בהצלחה!", "success");
   closePopup("settingsPopup");
 }
 
@@ -170,18 +193,9 @@ function loadSettings() {
     document.getElementById("wordsPerSubtitle").value = savedWordsPerSubtitle;
   }
   if (savedLanguage !== null) {
-    document.getElementById("languageSelect").value = savedLanguage;
+    document.getElementById("languageSelectMain").value = savedLanguage;
     selectedLanguage = savedLanguage;
     updateTextDirection(selectedLanguage);
-  }
-}
-
-function updateTextDirection(language) {
-  const htmlElement = document.documentElement;
-  if (language === "he" || language === "ar") {
-    htmlElement.dir = "rtl";
-  } else {
-    htmlElement.dir = "ltr";
   }
 }
 
@@ -240,6 +254,11 @@ async function transcribe() {
 
   try {
     validateAudioFile(audioFile);
+
+    // שמירת הקובץ אם נדרש
+    if (fileRetentionHours > 0) {
+      saveAudioFile(audioFile);
+    }
 
     const CHUNK_SIZE = 25 * 1024 * 1024;
     const chunks = await splitAudioFile(audioFile, CHUNK_SIZE);
@@ -334,19 +353,40 @@ function validateAudioFile(file) {
   return true;
 }
 
+function saveAudioFile(file) {
+  // פונקציה לשמירת הקובץ בשרת למשך הזמן הנבחר
+  // יש לממש את החלק הזה בצד השרת (Backend)
+  // כאן רק נשלח את הבקשה לשרת
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("retentionHours", fileRetentionHours);
+
+  fetch("/save-audio", {
+    method: "POST",
+    body: formData,
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("שגיאה בשמירת הקובץ");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log("קובץ נשמר בהצלחה:", data);
+    })
+    .catch((error) => {
+      console.error("שגיאה בשמירת הקובץ:", error);
+    });
+}
+
 async function splitAudioFile(file, chunkSize) {
   const chunks = [];
   for (let start = 0; start < file.size; start += chunkSize) {
-    const chunk = file.slice(
-      start,
-      Math.min(start + chunkSize, file.size)
-    );
+    const chunk = file.slice(start, Math.min(start + chunkSize, file.size));
     chunks.push(
-      new File(
-        [chunk],
-        `chunk_${chunks.length + 1}.${file.name.split(".").pop()}`,
-        { type: file.type }
-      )
+      new File([chunk], `chunk_${chunks.length + 1}.${file.name.split(".").pop()}`, {
+        type: file.type,
+      })
     );
   }
   return chunks;
@@ -468,9 +508,7 @@ function updateTranscription(
     return;
   }
 
-  const transcriptionCard = document.querySelector(
-    ".transcription-card"
-  );
+  const transcriptionCard = document.querySelector(".transcription-card");
   transcriptionCard.classList.add("has-content");
 
   const wordsPerSubtitle = parseInt(
