@@ -1,4 +1,4 @@
-// Global Variables
+// משתנים גלובליים
 let transcriptionResult;
 let apiKey;
 let audioBlob;
@@ -6,17 +6,18 @@ let mediaRecorder;
 let isRecording = false;
 let audioSource = null; // 'file' or 'record'
 let selectedFile = null;
-let selectedLanguage = "en"; // Default language
+let selectedLanguage = "he"; // שפת ברירת מחדל עברית
 let accumulatedDuration = 0;
-let fileRetentionHours = 2; // Default - 2 hours
+let fileRetentionHours = 2; // ברירת מחדל - 2 שעות
 
-// Load settings on page load
+// טעינת הגדרות בעת טעינת הדף
 document.addEventListener("DOMContentLoaded", () => {
   loadSettings();
   loadApiKey();
+  updateTextDirection(selectedLanguage);
 });
 
-// Functions for Popups
+// פונקציות לפופאפים
 function showPopup(popupId) {
   document.getElementById(popupId).style.display = "flex";
 }
@@ -25,16 +26,16 @@ function closePopup(popupId) {
   document.getElementById(popupId).style.display = "none";
 }
 
-// Functions for API Key
+// פונקציות למפתח API
 function saveApiKey() {
   const inputApiKey = document.getElementById("apiKeyInput").value.trim();
   if (inputApiKey) {
     localStorage.setItem("groqApiKey", inputApiKey);
     apiKey = inputApiKey;
-    showMessage("API Key saved successfully!", "success");
+    showMessage("מפתח ה-API נשמר בהצלחה!", "success");
     closePopup("apiKeyPopup");
   } else {
-    showMessage("Please enter a valid API Key", "error");
+    showMessage("אנא הזן מפתח API תקין", "error");
   }
 }
 
@@ -45,12 +46,12 @@ function loadApiKey() {
   }
 }
 
-// Functions for Language Selection
+// פונקציות לבחירת שפה
 function saveLanguageSelection() {
   selectedLanguage = document.getElementById("languageSelectMain").value;
   localStorage.setItem("selectedLanguage", selectedLanguage);
   updateTextDirection(selectedLanguage);
-  showMessage("Language saved successfully!", "success");
+  showMessage("השפה נשמרה בהצלחה!", "success");
   closePopup("languagePopup");
 }
 
@@ -63,7 +64,7 @@ function updateTextDirection(language) {
   }
 }
 
-// Functions for Audio Input
+// פונקציות לקלט אודיו
 function showAudioTab(tabName) {
   document
     .querySelectorAll("#audioInputPopup .tab-button")
@@ -92,47 +93,47 @@ function showAudioTab(tabName) {
 function handleFileSelect(event) {
   selectedFile = event.target.files[0];
   if (selectedFile) {
-    showMessage(`Selected file: ${selectedFile.name}`, "info");
+    showMessage(`הקובץ שנבחר: ${selectedFile.name}`, "info");
   }
 }
 
 function confirmAudioInput() {
   if (audioSource === "file") {
     if (!selectedFile) {
-      showMessage("Please select an audio file", "error");
+      showMessage("אנא בחר קובץ אודיו", "error");
       return;
     }
-    // Get file retention duration
+    // קבלת משך זמן שמירת הקובץ
     fileRetentionHours = parseInt(
       document.getElementById("fileRetention").value
     );
-    showMessage(`Selected file: ${selectedFile.name}`, "success");
+    showMessage(`הקובץ שנבחר: ${selectedFile.name}`, "success");
   } else if (audioSource === "record") {
     if (!audioBlob) {
-      showMessage("Please record audio first", "error");
+      showMessage("אנא בצע הקלטה תחילה", "error");
       return;
     }
-    // Get file retention duration
+    // קבלת משך זמן שמירת הקובץ
     fileRetentionHours = parseInt(
       document.getElementById("recordRetention").value
     );
-    showMessage("Recording saved", "success");
+    showMessage("ההקלטה נשמרה", "success");
   }
   closePopup("audioInputPopup");
 }
 
-// Functions for Recording
+// פונקציות להקלטה
 function updateRecordingStatus() {
   const recordingStatus = document.getElementById("recordingStatus");
   const recordButton = document.getElementById("recordButton");
   if (audioBlob) {
     recordingStatus.style.display = "block";
     recordButton.innerHTML =
-      '<i class="fas fa-microphone"></i> Record Again';
+      '<i class="fas fa-microphone"></i> הקלט שוב';
   } else {
     recordingStatus.style.display = "none";
     recordButton.innerHTML =
-      '<i class="fas fa-microphone"></i> Start Recording';
+      '<i class="fas fa-microphone"></i> התחל הקלטה';
   }
 }
 
@@ -162,11 +163,11 @@ async function toggleRecording() {
       mediaRecorder.start();
       isRecording = true;
       document.getElementById("recordButton").innerHTML =
-        '<i class="fas fa-stop"></i> Stop Recording';
+        '<i class="fas fa-stop"></i> הפסק הקלטה';
     } catch (error) {
-      console.error("Error in recording:", error);
+      console.error("שגיאה בהקלטה:", error);
       showMessage(
-        "Cannot start recording. Please ensure you have a microphone available.",
+        "לא ניתן להתחיל הקלטה. ודא שיש לך מיקרופון זמין.",
         "error"
       );
     }
@@ -174,17 +175,17 @@ async function toggleRecording() {
     mediaRecorder.stop();
     isRecording = false;
     document.getElementById("recordButton").innerHTML =
-      '<i class="fas fa-microphone"></i> Record Again';
+      '<i class="fas fa-microphone"></i> הקלט שוב';
   }
 }
 
-// Functions for Settings
+// פונקציות להגדרות
 function saveSettings() {
   const wordsPerSubtitle = document.getElementById(
     "wordsPerSubtitle"
   ).value;
   localStorage.setItem("wordsPerSubtitle", wordsPerSubtitle);
-  showMessage("Settings saved successfully!", "success");
+  showMessage("ההגדרות נשמרו בהצלחה!", "success");
   closePopup("settingsPopup");
 }
 
@@ -206,7 +207,7 @@ function loadSettings() {
   }
 }
 
-// Function to display messages to the user
+// פונקציה להצגת הודעות למשתמש
 function showMessage(message, type = "info", duration = 3000) {
   const messageElement = document.createElement("div");
   messageElement.textContent = message;
@@ -218,19 +219,16 @@ function showMessage(message, type = "info", duration = 3000) {
   }, duration);
 }
 
-// Functions for Transcription
+// פונקציות לתמלול
 async function transcribe() {
   if (!apiKey) {
-    showMessage("Please set your API Key first", "error");
+    showMessage("אנא הגדר את מפתח ה-API תחילה", "error");
     showPopup("apiKeyPopup");
     return;
   }
 
   if (!audioSource) {
-    showMessage(
-      "Please choose an audio source (file or recording)",
-      "error"
-    );
+    showMessage("אנא בחר מקור אודיו (קובץ או הקלטה)", "error");
     showPopup("audioInputPopup");
     return;
   }
@@ -241,35 +239,31 @@ async function transcribe() {
   if (audioSource === "file") {
     audioFile = selectedFile;
     if (!audioFile) {
-      showMessage("Please select an audio file", "error");
+      showMessage("אנא בחר קובץ אודיו", "error");
       return;
     }
   } else if (audioSource === "record") {
     if (!audioBlob) {
-      showMessage("Please record audio first", "error");
+      showMessage("אנא בצע הקלטה תחילה", "error");
       return;
     }
     audioFile = new File([audioBlob], "recorded_audio.wav", {
       type: "audio/wav",
     });
   } else {
-    showMessage(
-      "Please choose an audio source (file or recording)",
-      "error"
-    );
+    showMessage("אנא בחר מקור אודיו (קובץ או הקלטה)", "error");
     return;
   }
 
-  showMessage("Starting transcription...", "info", 0);
+  showMessage("מתחיל בתמלול...", "info", 0);
   document.getElementById("loader").style.display = "block";
-  document.getElementById("progressContainer").style.display =
-    "block";
+  document.getElementById("progressContainer").style.display = "block";
   document.getElementById("transcribeButton").disabled = true;
 
   try {
     validateAudioFile(audioFile);
 
-    // Save the file if required
+    // שמירת הקובץ אם נדרש
     if (fileRetentionHours > 0) {
       saveAudioFile(audioFile);
     }
@@ -283,7 +277,7 @@ async function transcribe() {
     for (let i = 0; i < chunks.length; i++) {
       const chunkNumber = i + 1;
       showMessage(
-        `Transcribing chunk ${chunkNumber} of ${totalChunks}...`,
+        `מתמלל חלק ${chunkNumber} מתוך ${totalChunks}...`,
         "info",
         0
       );
@@ -297,23 +291,16 @@ async function transcribe() {
 
         if (chunkResult && chunkResult.segments) {
           transcriptionResult.segments =
-            transcriptionResult.segments.concat(
-              chunkResult.segments
-            );
-          transcriptionResult.segments.sort(
-            (a, b) => a.start - b.start
-          );
+            transcriptionResult.segments.concat(chunkResult.segments);
+          transcriptionResult.segments.sort((a, b) => a.start - b.start);
           updateTranscription(true, chunkNumber, totalChunks);
         }
       } catch (error) {
-        console.error(
-          `Error transcribing chunk ${chunkNumber}:`,
-          error
-        );
+        console.error(`שגיאה בתמלול חלק ${chunkNumber}:`, error);
 
         const shouldContinue = await showErrorDialog(
-          `An error occurred while transcribing chunk ${chunkNumber} of ${totalChunks}. 
-                    Do you want to continue transcribing the remaining chunks?`
+          `אירעה שגיאה בעת תמלול חלק ${chunkNumber} מתוך ${totalChunks}. 
+                        האם ברצונך להמשיך בתמלול החלקים הנותרים?`
         );
 
         if (!shouldContinue) {
@@ -322,12 +309,10 @@ async function transcribe() {
       }
     }
 
-    // Update completion message
-    const progressInfo = document.querySelector(
-      ".transcription-progress-info"
-    );
+    // עדכון הודעת השלמה
+    const progressInfo = document.querySelector(".transcription-progress-info");
     if (progressInfo) {
-      progressInfo.innerHTML = "✅ Transcription completed successfully";
+      progressInfo.innerHTML = "✅ התמלול הושלם בהצלחה";
       progressInfo.style.backgroundColor = "#d4edda";
       progressInfo.style.color = "#155724";
 
@@ -337,12 +322,12 @@ async function transcribe() {
     }
 
     showTab("srt");
-    showMessage("Transcription completed successfully!", "success");
+    showMessage("התמלול הושלם בהצלחה!", "success");
   } catch (error) {
-    console.error("Error in transcription:", error);
+    console.error("שגיאה בתמלול:", error);
     showMessage(
       error.message ||
-        "An error occurred during transcription. Please check your API Key and try again.",
+        "אירעה שגיאה במהלך התמלול. אנא בדוק את מפתח ה-API ונסה שוב.",
       "error"
     );
     if (error.message.includes("API Key")) {
@@ -351,8 +336,7 @@ async function transcribe() {
     }
   } finally {
     document.getElementById("loader").style.display = "none";
-    document.getElementById("progressContainer").style.display =
-      "none";
+    document.getElementById("progressContainer").style.display = "none";
     document.getElementById("transcribeButton").disabled = false;
     updateProgress(0);
   }
@@ -372,7 +356,7 @@ function validateAudioFile(file) {
 
   if (!validTypes.includes(file.type)) {
     throw new Error(
-      "Unsupported file type. Please use a supported format such as WAV, MP3, M4A, OGG, or FLAC."
+      "סוג קובץ לא נתמך. אנא השתמש בפורמט נתמך כמו WAV, MP3, M4A, OGG או FLAC."
     );
   }
 
@@ -380,9 +364,9 @@ function validateAudioFile(file) {
 }
 
 function saveAudioFile(file) {
-  // Function to save the file on the server for the selected duration
-  // This needs to be implemented on the Backend side
-  // Here we just send the request to the server
+  // פונקציה לשמירת הקובץ בשרת למשך הזמן שנבחר
+  // יש לממש בצד השרת
+  // כאן אנו רק שולחים את הבקשה לשרת
   const formData = new FormData();
   formData.append("file", file);
   formData.append("retentionHours", fileRetentionHours);
@@ -393,33 +377,26 @@ function saveAudioFile(file) {
   })
     .then((response) => {
       if (!response.ok) {
-        throw new Error("Error saving the file");
+        throw new Error("שגיאה בשמירת הקובץ");
       }
       return response.json();
     })
     .then((data) => {
-      console.log("File saved successfully:", data);
+      console.log("הקובץ נשמר בהצלחה:", data);
     })
     .catch((error) => {
-      console.error("Error saving the file:", error);
+      console.error("שגיאה בשמירת הקובץ:", error);
     });
 }
 
 async function splitAudioFile(file, chunkSize) {
   const chunks = [];
   for (let start = 0; start < file.size; start += chunkSize) {
-    const chunk = file.slice(
-      start,
-      Math.min(start + chunkSize, file.size)
-    );
+    const chunk = file.slice(start, Math.min(start + chunkSize, file.size));
     chunks.push(
-      new File(
-        [chunk],
-        `chunk_${chunks.length + 1}.${file.name.split(".").pop()}`,
-        {
-          type: file.type,
-        }
-      )
+      new File([chunk], `chunk_${chunks.length + 1}.${file.name.split(".").pop()}`, {
+        type: file.type,
+      })
     );
   }
   return chunks;
@@ -451,20 +428,15 @@ async function transcribeChunk(chunk, chunkNumber, totalChunks) {
     xhr.upload.onprogress = (event) => {
       if (event.lengthComputable) {
         const chunkProgress = (event.loaded / event.total) * 100;
-        const previousChunksProgress =
-          ((chunkNumber - 1) / totalChunks) * 100;
-        const currentChunkContribution =
-          chunkProgress / totalChunks;
-        const totalProgress =
-          previousChunksProgress + currentChunkContribution;
+        const previousChunksProgress = ((chunkNumber - 1) / totalChunks) * 100;
+        const currentChunkContribution = chunkProgress / totalChunks;
+        const totalProgress = previousChunksProgress + currentChunkContribution;
 
         const progressInfo = `
-                    Chunk ${chunkNumber} of ${totalChunks}<br>
-                    Current chunk progress: ${Math.round(
-                      chunkProgress
-                    )}%<br>
-                    Total progress: ${Math.round(totalProgress)}%
-                `;
+                        חלק ${chunkNumber} מתוך ${totalChunks}<br>
+                        התקדמות החלק הנוכחי: ${Math.round(chunkProgress)}%<br>
+                        התקדמות כוללת: ${Math.round(totalProgress)}%
+                    `;
 
         updateProgress(totalProgress, progressInfo);
       }
@@ -482,83 +454,64 @@ async function transcribeChunk(chunk, chunkNumber, totalChunks) {
           }));
 
           if (response.segments.length > 0) {
-            const lastSegment =
-              response.segments[response.segments.length - 1];
+            const lastSegment = response.segments[response.segments.length - 1];
             accumulatedDuration = lastSegment.end;
           }
         }
 
         resolve(response);
       } else {
-        let errorMessage = "Unknown server error";
+        let errorMessage = "שגיאת שרת לא ידועה";
         try {
           const errorResponse = JSON.parse(xhr.responseText);
           errorMessage =
-            errorResponse.error?.message ||
-            errorResponse.message ||
-            errorMessage;
+            errorResponse.error?.message || errorResponse.message || errorMessage;
         } catch (e) {
           errorMessage = xhr.responseText || errorMessage;
         }
-        console.error("Server Error:", {
+        console.error("שגיאת שרת:", {
           status: xhr.status,
           message: errorMessage,
           response: xhr.responseText,
         });
-        reject(
-          new Error(`Server Error (${xhr.status}): ${errorMessage}`)
-        );
+        reject(new Error(`שגיאת שרת (${xhr.status}): ${errorMessage}`));
       }
     };
 
     xhr.onerror = () => {
-      reject(
-        new Error("Network Error - Please check your internet connection")
-      );
+      reject(new Error("שגיאת רשת - אנא בדוק את חיבור האינטרנט שלך"));
     };
 
     xhr.ontimeout = () => {
-      reject(new Error("Timeout - The request took too long"));
+      reject(new Error("הבקשה נמשכה זמן רב מדי"));
     };
 
-    xhr.open(
-      "POST",
-      "https://api.groq.com/openai/v1/audio/transcriptions"
-    );
+    xhr.open("POST", "https://api.groq.com/openai/v1/audio/transcriptions");
     xhr.setRequestHeader("Authorization", `Bearer ${apiKey}`);
     xhr.timeout = 300000;
 
     try {
       xhr.send(formData);
     } catch (error) {
-      reject(new Error(`Error sending the file: ${error.message}`));
+      reject(new Error(`שגיאה בשליחת הקובץ: ${error.message}`));
     }
   });
 }
 
-function updateTranscription(
-  isPartial = false,
-  currentChunk = null,
-  totalChunks = null
-) {
+function updateTranscription(isPartial = false, currentChunk = null, totalChunks = null) {
   if (!transcriptionResult) {
-    console.log("No transcription results available");
+    console.log("אין תוצאות תמלול זמינות");
     return;
   }
 
-  const transcriptionCard = document.querySelector(
-    ".transcription-card"
-  );
+  const transcriptionCard = document.querySelector(".transcription-card");
   transcriptionCard.classList.add("has-content");
 
   const wordsPerSubtitle = parseInt(
     document.getElementById("wordsPerSubtitle").value
   );
 
-  if (
-    transcriptionResult.segments &&
-    transcriptionResult.segments.length > 0
-  ) {
+  if (transcriptionResult.segments && transcriptionResult.segments.length > 0) {
     let srtFormat = "";
     let plainText = "";
     let subtitleIndex = 1;
@@ -573,26 +526,18 @@ function updateTranscription(
       );
       subtitles.forEach((subtitle) => {
         srtFormat += `${subtitleIndex}\n`;
-        srtFormat += `${formatTime(subtitle.start)} --> ${formatTime(
-          subtitle.end
-        )}\n`;
+        srtFormat += `${formatTime(subtitle.start)} --> ${formatTime(subtitle.end)}\n`;
         srtFormat += `${subtitle.text}\n\n`;
         plainText += subtitle.text + " ";
         subtitleIndex++;
       });
     });
 
-    document.getElementById(
-      "srtTranscription"
-    ).innerHTML = `<pre>${srtFormat}</pre>`;
-    document.getElementById(
-      "plainTextTranscription"
-    ).innerHTML = plainText.trim();
+    document.getElementById("srtTranscription").innerHTML = `<pre>${srtFormat}</pre>`;
+    document.getElementById("plainTextTranscription").innerHTML = plainText.trim();
 
     if (isPartial && currentChunk) {
-      let progressInfo = document.querySelector(
-        ".transcription-progress-info"
-      );
+      let progressInfo = document.querySelector(".transcription-progress-info");
       if (!progressInfo) {
         progressInfo = document.createElement("div");
         progressInfo.className = "transcription-progress-info";
@@ -601,17 +546,13 @@ function updateTranscription(
         progressInfo.style.backgroundColor = "#fff3cd";
         progressInfo.style.marginBottom = "10px";
         const srtContainer = document.getElementById("srtContent");
-        srtContainer.insertBefore(
-          progressInfo,
-          srtContainer.firstChild
-        );
+        srtContainer.insertBefore(progressInfo, srtContainer.firstChild);
       }
-      progressInfo.innerHTML = `⚠️ Transcription in progress: Chunk ${currentChunk} of ${totalChunks}`;
+      progressInfo.innerHTML = `⚠️ תמלול בעיצומו: חלק ${currentChunk} מתוך ${totalChunks}`;
     }
 
     document.getElementById("srtContent").style.display = "block";
-    document.getElementById("plainTextContent").style.display =
-      "none";
+    document.getElementById("plainTextContent").style.display = "none";
 
     if (isPartial) {
       const srtElement = document.getElementById("srtTranscription");
@@ -627,9 +568,9 @@ function updateTranscription(
     }
   } else {
     document.getElementById("srtTranscription").innerHTML =
-      "<p>No transcription received or the transcription is empty</p>";
+      "<p>לא התקבל תמלול או שהתמלול ריק</p>";
     document.getElementById("plainTextTranscription").textContent =
-      "No transcription received or the transcription is empty";
+      "לא התקבל תמלול או שהתמלול ריק";
 
     const downloadButton = document.querySelector(
       '.control-button[onclick="downloadFile()"]'
@@ -650,13 +591,7 @@ function formatTime(seconds) {
   return `${hours}:${minutes}:${secs},${ms}`;
 }
 
-function splitIntoSubtitles(
-  text,
-  startTime,
-  endTime,
-  maxWords,
-  avgLogprob
-) {
+function splitIntoSubtitles(text, startTime, endTime, maxWords, avgLogprob) {
   const words = text.split(" ");
   const subtitles = [];
   let currentSubtitle = { text: "", start: startTime };
@@ -668,8 +603,7 @@ function splitIntoSubtitles(
 
     if (wordCount === maxWords || index === words.length - 1) {
       const progress = (index + 1) / words.length;
-      currentSubtitle.end =
-        startTime + (endTime - startTime) * progress;
+      currentSubtitle.end = startTime + (endTime - startTime) * progress;
 
       if (avgLogprob && avgLogprob < -1.0) {
         currentSubtitle.text = `<span class="low-confidence">${currentSubtitle.text.trim()}</span>`;
@@ -709,11 +643,11 @@ function copyToClipboard() {
   const text = document.querySelector(".tab-content.active").innerText;
   navigator.clipboard.writeText(text).then(
     () => {
-      showMessage("Text copied to clipboard", "success");
+      showMessage("הטקסט הועתק ללוח", "success");
     },
     (err) => {
-      console.error("Error copying: ", err);
-      showMessage("Error copying text", "error");
+      console.error("שגיאה בהעתקה: ", err);
+      showMessage("שגיאה בהעתקת הטקסט", "error");
     }
   );
 }
@@ -724,7 +658,7 @@ function downloadFile() {
     !transcriptionResult.segments ||
     transcriptionResult.segments.length === 0
   ) {
-    showMessage("No transcription available for download", "error");
+    showMessage("אין תמלול זמין להורדה", "error");
     return;
   }
 
@@ -738,19 +672,19 @@ function downloadFile() {
 
   downloadPopup.innerHTML = `
     <div class="popup-content">
-      <h3>Download File</h3>
+      <h3>הורדת קובץ</h3>
       <div style="margin-bottom: 15px;">
-        <label for="fileName">File Name:</label>
+        <label for="fileName">שם הקובץ:</label>
         <input type="text" id="fileName" value="${defaultFileName}" style="width: 100%; margin-top: 5px; padding: 5px;">
       </div>
       <div class="popup-footer">
         <button class="control-button" id="downloadSrt">
-          <i class="fas fa-download"></i> Download as SRT
+          <i class="fas fa-download"></i> הורד כ-SRT
         </button>
         <button class="control-button" id="downloadTxt">
-          <i class="fas fa-download"></i> Download as Text
+          <i class="fas fa-download"></i> הורד כטקסט
         </button>
-        <button class="control-button" id="cancelDownload">Cancel</button>
+        <button class="control-button" id="cancelDownload">ביטול</button>
       </div>
     </div>
   `;
@@ -768,9 +702,7 @@ function downloadFile() {
   document.getElementById("downloadTxt").onclick = () => {
     const fileName =
       document.getElementById("fileName").value.trim() || defaultFileName;
-    const content = document.getElementById(
-      "plainTextTranscription"
-    ).innerText;
+    const content = document.getElementById("plainTextTranscription").innerText;
     downloadContent(content, `${fileName}.txt`);
     downloadPopup.remove();
   };
@@ -799,8 +731,8 @@ function downloadContent(content, fileName) {
 }
 
 function summarizeTranscription() {
-  // Function to summarize the transcription
-  // Implement as needed
+  // פונקציה לסיכום התמלול
+  // יש לממש לפי הצורך
 }
 
 function translateTranscription() {
@@ -809,16 +741,14 @@ function translateTranscription() {
     !transcriptionResult.segments ||
     transcriptionResult.segments.length === 0
   ) {
-    showMessage("No transcription available to translate", "error");
+    showMessage("אין תמלול זמין לתרגום", "error");
     return;
   }
 
-  // Get the transcribed text
-  const plainText = document.getElementById(
-    "plainTextTranscription"
-  ).innerText;
+  // קבלת הטקסט המתומלל
+  const plainText = document.getElementById("plainTextTranscription").innerText;
 
-  // Open translation popup
+  // פתיחת פופאפ תרגום
   showTranslationPopup(plainText);
 }
 
@@ -829,24 +759,24 @@ function showTranslationPopup(text) {
 
   translationPopup.innerHTML = `
     <div class="popup-content">
-      <h2>Translate Transcription</h2>
-      <label for="targetLanguage">Select Target Language:</label>
+      <h2>תרגום התמלול</h2>
+      <label for="targetLanguage">בחר שפת יעד:</label>
       <select id="targetLanguage">
         <option value="en">English</option>
-        <option value="he">Hebrew</option>
-        <option value="ar">Arabic</option>
-        <option value="ru">Russian</option>
-        <option value="fr">French</option>
-        <option value="es">Spanish</option>
-        <option value="de">German</option>
-        <!-- Add more languages as needed -->
+        <option value="he">עברית</option>
+        <option value="ar">العربية</option>
+        <option value="ru">Русский</option>
+        <option value="fr">Français</option>
+        <option value="es">Español</option>
+        <option value="de">Deutsch</option>
+        <!-- הוסף שפות נוספות לפי הצורך -->
       </select>
       <div class="popup-footer">
         <button class="control-button" onclick="performTranslation('${encodeURIComponent(
           text
-        )}')">Translate</button>
+        )}')">תרגם</button>
         <button class="control-button" onclick="closeTranslationPopup(this)">
-          Cancel
+          ביטול
         </button>
       </div>
     </div>
@@ -864,10 +794,10 @@ function performTranslation(encodedText) {
   const text = decodeURIComponent(encodedText);
   const targetLanguage = document.getElementById("targetLanguage").value;
 
-  // Show loader or message
-  showMessage("Translating...", "info", 0);
+  // הצגת הודעה למשתמש
+  showMessage("מתרגם...", "info", 0);
 
-  // Send text to external server for translation
+  // שליחת הטקסט לשרת חיצוני לתרגום
   fetch("https://api.example.com/translate", {
     method: "POST",
     headers: {
@@ -880,15 +810,15 @@ function performTranslation(encodedText) {
   })
     .then((response) => response.json())
     .then((data) => {
-      // Hide loader or message
-      showMessage("Translation completed!", "success");
+      // הסתרת ההודעה
+      showMessage("התרגום הושלם!", "success");
 
-      // Display the translated text
+      // הצגת הטקסט המתורגם
       showTranslatedText(data.translatedText);
     })
     .catch((error) => {
-      console.error("Error in translation:", error);
-      showMessage("Translation failed. Please try again.", "error");
+      console.error("שגיאה בתרגום:", error);
+      showMessage("התרגום נכשל. אנא נסה שוב.", "error");
     });
 }
 
@@ -899,11 +829,11 @@ function showTranslatedText(translatedText) {
 
   translationResultPopup.innerHTML = `
     <div class="popup-content">
-      <h2>Translated Text</h2>
+      <h2>טקסט מתורגם</h2>
       <div class="translated-text">${translatedText}</div>
       <div class="popup-footer">
         <button class="control-button" onclick="closeTranslationPopup(this)">
-          Close
+          סגור
         </button>
       </div>
     </div>
@@ -912,9 +842,9 @@ function showTranslatedText(translatedText) {
   document.body.appendChild(translationResultPopup);
 }
 
-// Additional functions...
+// פונקציות נוספות...
 
-// Function to show error dialog
+// פונקציה להצגת דיאלוג שגיאה
 function showErrorDialog(message) {
   return new Promise((resolve) => {
     const dialog = document.createElement("div");
@@ -923,11 +853,11 @@ function showErrorDialog(message) {
 
     dialog.innerHTML = `
           <div class="popup-content">
-              <h3>Transcription Error</h3>
+              <h3>שגיאה בתמלול</h3>
               <p>${message}</p>
               <div class="popup-footer">
-                  <button class="control-button" id="yesButton">Yes</button>
-                  <button class="control-button" id="noButton">No</button>
+                  <button class="control-button" id="yesButton">כן</button>
+                  <button class="control-button" id="noButton">לא</button>
               </div>
           </div>
       `;
@@ -951,10 +881,10 @@ function toggleTranscription(button) {
   const isExpanded = container.classList.contains("expanded");
 
   container.classList.toggle("expanded");
-  button.textContent = isExpanded ? "Show More" : "Show Less";
+  button.textContent = isExpanded ? "הצג עוד" : "הצג פחות";
 }
 
-// Function to toggle the menu on mobile
+// פונקציה למעבר בין כרטיסיות
 function toggleMenu() {
   const nav = document.querySelector("header nav ul");
   nav.classList.toggle("show");
