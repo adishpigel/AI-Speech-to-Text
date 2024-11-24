@@ -15,6 +15,7 @@ body {
   color: var(--text-color);
   margin: 0;
   padding: 0;
+  direction: rtl;
 }
 
 /* סרגל עליון */
@@ -24,7 +25,8 @@ header {
   align-items: center;
   justify-content: space-between;
   padding: 10px 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1000;
 }
 
 header .logo {
@@ -33,12 +35,21 @@ header .logo {
   color: var(--primary-color);
 }
 
+header nav {
+  display: flex;
+  align-items: center;
+}
+
 header nav ul {
   list-style: none;
   display: flex;
   gap: 15px;
   margin: 0;
   padding: 0;
+}
+
+header nav ul li {
+  position: relative;
 }
 
 header nav ul li a {
@@ -50,6 +61,45 @@ header nav ul li a {
 
 header nav ul li a:hover {
   color: var(--primary-color);
+}
+
+/* תפריט המבורגר */
+.menu-toggle {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  header nav ul {
+    flex-direction: column;
+    background-color: #ffffff;
+    position: absolute;
+    top: 60px;
+    right: 0;
+    width: 100%;
+    display: none;
+    padding: 10px 0;
+  }
+
+  header nav ul li {
+    text-align: center;
+  }
+
+  header nav ul.show {
+    display: flex;
+  }
+
+  .menu-toggle {
+    display: block;
+    font-size: 1.5em;
+    cursor: pointer;
+    color: var(--text-color);
+    margin-left: 15px;
+  }
+
+  header nav {
+    flex: 1;
+    justify-content: flex-end;
+  }
 }
 
 /* אזור מרכזי */
@@ -163,40 +213,49 @@ main {
 .close-button {
   position: absolute;
   top: 15px;
-  right: 15px;
+  left: 15px;
   background: none;
   border: none;
-  font-size: 1.2em;
+  font-size: 1.5em;
   cursor: pointer;
   color: var(--text-color);
 }
 
+/* הודעות למשתמש */
+.message {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 20px;
+  border-radius: var(--border-radius);
+  z-index: 1000;
+  text-align: center;
+  background-color: #17a2b8;
+  color: #ffffff;
+}
+
+.message.success {
+  background-color: #28a745;
+}
+
+.message.error {
+  background-color: #dc3545;
+}
+
+.message.info {
+  background-color: #17a2b8;
+}
+
 /* התאמה למובייל */
 @media (max-width: 600px) {
-  header nav ul {
-    flex-direction: column;
-    background-color: #ffffff;
-    position: absolute;
-    top: 60px;
-    right: 0;
-    width: 100%;
-    display: none;
-  }
-
-  header nav ul.show {
-    display: flex;
-  }
-
-  header .menu-toggle {
-    display: block;
-    cursor: pointer;
-  }
-
   .main-buttons {
     flex-direction: column;
+    gap: 10px;
   }
 
   .additional-buttons {
     flex-direction: column;
+    gap: 10px;
   }
 }
