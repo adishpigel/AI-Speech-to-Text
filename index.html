@@ -2,14 +2,8 @@
 <html lang="he" dir="rtl">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    />
-    <meta
-      name="description"
-      content="AITexter - תמלול אודיו חכם"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="AITexter - תמלול אודיו חכם" />
     <title>AITexter - תמלול אודיו חכם</title>
     <!-- גופנים ואייקונים -->
     <link
@@ -19,6 +13,9 @@
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      integrity="sha512-Fo3rlrZj/k7ujTTXRNxQ1B+n42nlQ1gCptciSLk6gZxlPj38vlrMmgcE6eVjQkYGqZFw1Jc71liGgYZlEo8C2Q=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
     />
     <!-- קובץ CSS חיצוני -->
     <link rel="stylesheet" href="style.css" />
@@ -64,128 +61,70 @@
           <h2>התחל הקלטה או העלה קובץ אודיו</h2>
           <!-- כפתורי מקור אודיו -->
           <div class="audio-source-buttons">
-            <button
-              class="action-button"
-              onclick="showPopup('audioInputPopup')"
-            >
+            <button class="action-button" onclick="showPopup('audioInputPopup')">
               <i class="fas fa-upload"></i> בחר מקור אודיו
             </button>
           </div>
           <!-- אזור הצגת התמלול -->
-          <div
-            class="transcription-display"
-            id="transcriptionDisplay"
-          >
+          <div class="transcription-display" id="transcriptionDisplay">
             <!-- התמלול יופיע כאן -->
           </div>
         </div>
 
         <!-- כפתורים ראשיים -->
         <div class="main-buttons">
-          <button
-            class="primary-button"
-            id="transcribeButton"
-            onclick="transcribe()"
-          >
+          <button class="primary-button" id="transcribeButton" onclick="transcribe()">
             <i class="fas fa-play"></i> התחל תמלול
           </button>
-          <button
-            class="secondary-button"
-            id="cancelTranscriptionButton"
-            onclick="cancelTranscription()"
-            style="display: none;"
-          >
+          <button class="secondary-button" id="cancelTranscriptionButton" onclick="cancelTranscription()" style="display: none;">
             <i class="fas fa-stop"></i> הפסק תמלול
           </button>
         </div>
 
         <!-- כפתורים נוספים -->
         <div class="additional-buttons">
-          <button
-            class="action-button"
-            onclick="copyToClipboard()"
-          >
+          <button class="action-button" onclick="copyToClipboard()">
             <i class="fas fa-copy"></i> העתק
           </button>
-          <button
-            class="action-button"
-            onclick="downloadFile()"
-          >
+          <button class="action-button" onclick="downloadFile()">
             <i class="fas fa-download"></i> הורד
           </button>
-          <button
-            class="action-button"
-            onclick="summarizeTranscription()"
-          >
+          <button class="action-button" onclick="summarizeTranscription()">
             <i class="fas fa-compress-alt"></i> סכם
           </button>
           <!-- כפתור חדש לתרגום -->
-          <button
-            class="action-button"
-            onclick="translateTranscription()"
-          >
+          <button class="action-button" onclick="translateTranscription()">
             <i class="fas fa-globe"></i> תרגם
           </button>
         </div>
 
         <!-- אזור התקדמות והודעות -->
         <div id="loader" class="loader"></div>
-        <div
-          class="progress-container"
-          id="progressContainer"
-        >
+        <div class="progress-container" id="progressContainer">
           <div class="progress-bar">
-            <div
-              class="progress-fill"
-              id="progressFill"
-            ></div>
+            <div class="progress-fill" id="progressFill"></div>
           </div>
-          <div class="progress-text" id="progressText">
-            0%
-          </div>
+          <div class="progress-text" id="progressText">0%</div>
         </div>
 
         <!-- כרטיסיות התמלול -->
         <div class="card transcription-card">
           <div class="tab-buttons">
-            <button
-              class="tab-button active"
-              onclick="showTab('srt')"
-            >
-              SRT
-            </button>
-            <button
-              class="tab-button"
-              onclick="showTab('plainText')"
-            >
-              טקסט רגיל
-            </button>
+            <button class="tab-button active" onclick="showTab('srt')">SRT</button>
+            <button class="tab-button" onclick="showTab('plainText')">טקסט רגיל</button>
           </div>
-          <div
-            id="srtContent"
-            class="tab-content active"
-          >
+          <div id="srtContent" class="tab-content active">
             <div class="transcription-container">
               <div id="srtTranscription"></div>
               <div class="transcription-fade"></div>
-              <button
-                class="expand-button"
-                onclick="toggleTranscription(this)"
-              >
-                הצג עוד
-              </button>
+              <button class="expand-button" onclick="toggleTranscription(this)">הצג עוד</button>
             </div>
           </div>
           <div id="plainTextContent" class="tab-content">
             <div class="transcription-container">
               <div id="plainTextTranscription"></div>
               <div class="transcription-fade"></div>
-              <button
-                class="expand-button"
-                onclick="toggleTranscription(this)"
-              >
-                הצג עוד
-              </button>
+              <button class="expand-button" onclick="toggleTranscription(this)">הצג עוד</button>
             </div>
           </div>
         </div>
@@ -208,24 +147,169 @@
           <!-- הוסף שפות נוספות לפי הצורך -->
         </select>
         <div class="popup-footer">
-          <button
-            class="control-button"
-            onclick="saveLanguageSelection()"
-          >
-            שמור
+          <button class="control-button" onclick="saveLanguageSelection()">שמור</button>
+          <button class="control-button" onclick="closePopup('languagePopup')">ביטול</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- פופאפ להגדרת מפתח API -->
+    <div id="apiKeyPopup" class="popup">
+      <div class="popup-content">
+        <h2>הגדרת מפתח API</h2>
+        <input type="text" id="apiKeyInput" placeholder="הזן את מפתח ה-API שלך" />
+        <div class="popup-footer">
+          <button class="control-button" onclick="saveApiKey()">שמור</button>
+          <button class="control-button" onclick="closePopup('apiKeyPopup')">ביטול</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- פופאפ לקלט אודיו -->
+    <div id="audioInputPopup" class="popup">
+      <div class="popup-content">
+        <h2>בחר מקור אודיו</h2>
+        <div class="tab-buttons">
+          <button class="tab-button active" onclick="showAudioTab('file')">העלה קובץ</button>
+          <button class="tab-button" onclick="showAudioTab('record')">הקלט</button>
+        </div>
+        <div id="fileInputTab" class="tab-content active">
+          <input type="file" id="audioFile" accept="audio/*" onchange="handleFileSelect(event)" />
+          <!-- בחירת משך זמן שמירת הקובץ -->
+          <div style="margin-top: 15px;">
+            <label for="fileRetention">משך זמן שמירת הקובץ:</label>
+            <select id="fileRetention">
+              <option value="0">אל תשמור</option>
+              <option value="1">שעה אחת</option>
+              <option value="2" selected>שעתיים</option>
+              <option value="6">שש שעות</option>
+              <option value="12">שנים עשר שעות</option>
+              <option value="24">עשרים וארבע שעות</option>
+            </select>
+          </div>
+        </div>
+        <div id="recordInputTab" class="tab-content">
+          <button id="recordButton" class="control-button" onclick="toggleRecording()">
+            <i class="fas fa-microphone"></i> התחל הקלטה
           </button>
-          <button
-            class="control-button"
-            onclick="closePopup('languagePopup')"
-          >
-            ביטול
+          <div id="recordingStatus" style="display: none;">
+            <p>ההקלטה מוכנה</p>
+            <button class="control-button" onclick="deleteRecording()">מחק הקלטה</button>
+          </div>
+          <!-- בחירת משך זמן שמירת הקובץ -->
+          <div style="margin-top: 15px;">
+            <label for="recordRetention">משך זמן שמירת הקובץ:</label>
+            <select id="recordRetention">
+              <option value="0">אל תשמור</option>
+              <option value="1">שעה אחת</option>
+              <option value="2" selected>שעתיים</option>
+              <option value="6">שש שעות</option>
+              <option value="12">שנים עשר שעות</option>
+              <option value="24">עשרים וארבע שעות</option>
+            </select>
+          </div>
+        </div>
+        <div class="popup-footer">
+          <button class="control-button" onclick="confirmAudioInput()">אשר</button>
+          <button class="control-button" onclick="closePopup('audioInputPopup')">ביטול</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- פופאפ להגדרות -->
+    <div id="settingsPopup" class="popup">
+      <div class="popup-content">
+        <h2>הגדרות</h2>
+        <div style="margin-bottom: 15px;">
+          <label for="wordsPerSubtitle">מילים לכל כתובית:</label>
+          <select id="wordsPerSubtitle">
+            <option value="4">4</option>
+            <option value="6">6</option>
+            <option value="8" selected>8</option>
+            <option value="10">10</option>
+            <option value="12">12</option>
+          </select>
+        </div>
+        <div class="popup-footer">
+          <button class="control-button" onclick="saveSettings()">שמור</button>
+          <button class="control-button" onclick="closePopup('settingsPopup')">ביטול</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- פופאפ לעזרה -->
+    <div id="helpPopup" class="popup">
+      <div class="popup-content">
+        <h2>עזרה</h2>
+        <h3>כיצד להשיג מפתח API:</h3>
+        <ol>
+          <li>בקר באתר <a href="https://console.groq.com" target="_blank">console.groq.com</a></li>
+          <li>הירשם או התחבר לחשבונך</li>
+          <li>לחץ על "צור מפתח API"</li>
+          <li>העתק את המפתח שנוצר</li>
+        </ol>
+        <h3>כיצד להשתמש באתר:</h3>
+        <ol>
+          <li>הזן את מפתח ה-API שלך</li>
+          <li>בחר קובץ אודיו או הקלט ישירות</li>
+          <li>בחר את משך זמן שמירת הקובץ בשרת (אם רלוונטי)</li>
+          <li>לחץ על "התחל תמלול"</li>
+          <li>המתן לתוצאות ובחר בין פורמט SRT לטקסט רגיל</li>
+        </ol>
+        <button class="close-button" onclick="closePopup('helpPopup')">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- פופאפ לסיכום -->
+    <div id="summaryPopup" class="popup">
+      <div class="popup-content">
+        <h2>סיכום תמלול</h2>
+        <div id="summaryContent"></div>
+        <div class="popup-footer">
+          <button class="control-button" onclick="downloadSummary()">
+            <i class="fas fa-download"></i> הורד סיכום
+          </button>
+          <button class="control-button" onclick="closePopup('summaryPopup')">
+            סגור
           </button>
         </div>
       </div>
     </div>
 
-    <!-- פופאפים נוספים (API Key, הגדרות, עזרה, וכו') -->
-    <!-- ... (אין שינויים בפופאפים אלה) -->
+    <!-- פופאפ לתרגום -->
+    <div id="translationPopup" class="popup">
+      <div class="popup-content">
+        <h2>תרגום התמלול</h2>
+        <label for="targetLanguage">בחר שפת יעד:</label>
+        <select id="targetLanguage">
+          <option value="en">English</option>
+          <option value="he">עברית</option>
+          <option value="ar">العربية</option>
+          <option value="ru">Русский</option>
+          <option value="fr">Français</option>
+          <option value="es">Español</option>
+          <option value="de">Deutsch</option>
+          <!-- הוסף שפות נוספות לפי הצורך -->
+        </select>
+        <div class="popup-footer">
+          <button class="control-button" onclick="performTranslation()">תרגם</button>
+          <button class="control-button" onclick="closePopup('translationPopup')">ביטול</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- פופאפ להצגת תרגום -->
+    <div id="translationResultPopup" class="popup">
+      <div class="popup-content">
+        <h2>טקסט מתורגם</h2>
+        <div id="translatedText"></div>
+        <div class="popup-footer">
+          <button class="control-button" onclick="closePopup('translationResultPopup')">סגור</button>
+        </div>
+      </div>
+    </div>
 
     <!-- קובץ JavaScript חיצוני -->
     <script src="script.js"></script>
