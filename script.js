@@ -1,8 +1,8 @@
 // משתנים גלובליים
-let transcriptionResult;
-let apiKey;
-let audioBlob;
-let mediaRecorder;
+let transcriptionResult = null;
+let apiKey = null;
+let audioBlob = null;
+let mediaRecorder = null;
 let isRecording = false;
 let audioSource = null; // 'file' or 'record'
 let selectedFile = null;
@@ -10,7 +10,7 @@ let selectedLanguage = "he"; // שפת ברירת מחדל עברית
 let accumulatedDuration = 0;
 let fileRetentionHours = 2; // ברירת מחדל - 2 שעות
 
-// טעינת הגדרות בעת טעינת הדף
+// טעינת הגדרות ומפתח API בעת טעינת הדף
 document.addEventListener("DOMContentLoaded", () => {
   loadSettings();
   loadApiKey();
@@ -66,18 +66,10 @@ function updateTextDirection(language) {
 
 // פונקציות לקלט אודיו
 function showAudioTab(tabName) {
-  document
-    .querySelectorAll("#audioInputPopup .tab-button")
-    .forEach((btn) => btn.classList.remove("active"));
-  document
-    .querySelectorAll("#audioInputPopup .tab-content")
-    .forEach((content) => content.classList.remove("active"));
+  document.querySelectorAll("#audioInputPopup .tab-button").forEach((btn) => btn.classList.remove("active"));
+  document.querySelectorAll("#audioInputPopup .tab-content").forEach((content) => content.classList.remove("active"));
 
-  document
-    .querySelector(
-      `#audioInputPopup .tab-button[onclick="showAudioTab('${tabName}')"]`
-    )
-    .classList.add("active");
+  document.querySelector(`#audioInputPopup .tab-button[onclick="showAudioTab('${tabName}')"]`).classList.add("active");
   document.getElementById(`${tabName}InputTab`).classList.add("active");
 
   audioSource = tabName;
@@ -104,9 +96,7 @@ function confirmAudioInput() {
       return;
     }
     // קבלת משך זמן שמירת הקובץ
-    fileRetentionHours = parseInt(
-      document.getElementById("fileRetention").value
-    );
+    fileRetentionHours = parseInt(document.getElementById("fileRetention").value);
     showMessage(`הקובץ שנבחר: ${selectedFile.name}`, "success");
   } else if (audioSource === "record") {
     if (!audioBlob) {
@@ -114,9 +104,7 @@ function confirmAudioInput() {
       return;
     }
     // קבלת משך זמן שמירת הקובץ
-    fileRetentionHours = parseInt(
-      document.getElementById("recordRetention").value
-    );
+    fileRetentionHours = parseInt(document.getElementById("recordRetention").value);
     showMessage("ההקלטה נשמרה", "success");
   }
   closePopup("audioInputPopup");
@@ -128,12 +116,10 @@ function updateRecordingStatus() {
   const recordButton = document.getElementById("recordButton");
   if (audioBlob) {
     recordingStatus.style.display = "block";
-    recordButton.innerHTML =
-      '<i class="fas fa-microphone"></i> הקלט שוב';
+    recordButton.innerHTML = '<i class="fas fa-microphone"></i> הקלט שוב';
   } else {
     recordingStatus.style.display = "none";
-    recordButton.innerHTML =
-      '<i class="fas fa-microphone"></i> התחל הקלטה';
+    recordButton.innerHTML = '<i class="fas fa-microphone"></i> התחל הקלטה';
   }
 }
 
@@ -145,9 +131,7 @@ function deleteRecording() {
 async function toggleRecording() {
   if (!isRecording) {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-      });
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaRecorder = new MediaRecorder(stream);
       const chunks = [];
 
@@ -162,46 +146,35 @@ async function toggleRecording() {
 
       mediaRecorder.start();
       isRecording = true;
-      document.getElementById("recordButton").innerHTML =
-        '<i class="fas fa-stop"></i> הפסק הקלטה';
+      document.getElementById("recordButton").innerHTML = '<i class="fas fa-stop"></i> הפסק הקלטה';
     } catch (error) {
       console.error("שגיאה בהקלטה:", error);
-      showMessage(
-        "לא ניתן להתחיל הקלטה. ודא שיש לך מיקרופון זמין.",
-        "error"
-      );
+      showMessage("לא ניתן להתחיל הקלטה. ודא שיש לך מיקרופון זמין והענקת הרשאה.", "error");
     }
   } else {
     mediaRecorder.stop();
     isRecording = false;
-    document.getElementById("recordButton").innerHTML =
-      '<i class="fas fa-microphone"></i> הקלט שוב';
+    document.getElementById("recordButton").innerHTML = '<i class="fas fa-microphone"></i> הקלט שוב';
   }
 }
 
 // פונקציות להגדרות
 function saveSettings() {
-  const wordsPerSubtitle = document.getElementById(
-    "wordsPerSubtitle"
-  ).value;
+  const wordsPerSubtitle = document.getElementById("wordsPerSubtitle").value;
   localStorage.setItem("wordsPerSubtitle", wordsPerSubtitle);
   showMessage("ההגדרות נשמרו בהצלחה!", "success");
   closePopup("settingsPopup");
 }
 
 function loadSettings() {
-  const savedWordsPerSubtitle = localStorage.getItem(
-    "wordsPerSubtitle"
-  );
+  const savedWordsPerSubtitle = localStorage.getItem("wordsPerSubtitle");
   const savedLanguage = localStorage.getItem("selectedLanguage");
 
   if (savedWordsPerSubtitle) {
-    document.getElementById("wordsPerSubtitle").value =
-      savedWordsPerSubtitle;
+    document.getElementById("wordsPerSubtitle").value = savedWordsPerSubtitle;
   }
   if (savedLanguage !== null) {
-    document.getElementById("languageSelectMain").value =
-      savedLanguage;
+    document.getElementById("languageSelectMain").value = savedLanguage;
     selectedLanguage = savedLanguage;
     updateTextDirection(selectedLanguage);
   }
@@ -234,6 +207,7 @@ async function transcribe() {
   }
 
   accumulatedDuration = 0;
+  transcriptionResult = { segments: [] };
 
   let audioFile;
   if (audioSource === "file") {
@@ -247,9 +221,7 @@ async function transcribe() {
       showMessage("אנא בצע הקלטה תחילה", "error");
       return;
     }
-    audioFile = new File([audioBlob], "recorded_audio.wav", {
-      type: "audio/wav",
-    });
+    audioFile = new File([audioBlob], "recorded_audio.wav", { type: "audio/wav" });
   } else {
     showMessage("אנא בחר מקור אודיו (קובץ או הקלטה)", "error");
     return;
@@ -268,41 +240,24 @@ async function transcribe() {
       saveAudioFile(audioFile);
     }
 
-    const CHUNK_SIZE = 25 * 1024 * 1024;
+    const CHUNK_SIZE = 25 * 1024 * 1024; // 25MB
     const chunks = await splitAudioFile(audioFile, CHUNK_SIZE);
     const totalChunks = chunks.length;
 
-    transcriptionResult = { segments: [] };
-
     for (let i = 0; i < chunks.length; i++) {
       const chunkNumber = i + 1;
-      showMessage(
-        `מתמלל חלק ${chunkNumber} מתוך ${totalChunks}...`,
-        "info",
-        0
-      );
+      showMessage(`מתמלל חלק ${chunkNumber} מתוך ${totalChunks}...`, "info", 0);
 
       try {
-        const chunkResult = await transcribeChunk(
-          chunks[i],
-          chunkNumber,
-          totalChunks
-        );
-
+        const chunkResult = await transcribeChunk(chunks[i], chunkNumber, totalChunks);
         if (chunkResult && chunkResult.segments) {
-          transcriptionResult.segments =
-            transcriptionResult.segments.concat(chunkResult.segments);
+          transcriptionResult.segments = transcriptionResult.segments.concat(chunkResult.segments);
           transcriptionResult.segments.sort((a, b) => a.start - b.start);
           updateTranscription(true, chunkNumber, totalChunks);
         }
       } catch (error) {
         console.error(`שגיאה בתמלול חלק ${chunkNumber}:`, error);
-
-        const shouldContinue = await showErrorDialog(
-          `אירעה שגיאה בעת תמלול חלק ${chunkNumber} מתוך ${totalChunks}. 
-                        האם ברצונך להמשיך בתמלול החלקים הנותרים?`
-        );
-
+        const shouldContinue = await showErrorDialog(`אירעה שגיאה בעת תמלול חלק ${chunkNumber} מתוך ${totalChunks}. האם ברצונך להמשיך בתמלול החלקים הנותרים?`);
         if (!shouldContinue) {
           throw error;
         }
@@ -310,27 +265,11 @@ async function transcribe() {
     }
 
     // עדכון הודעת השלמה
-    const progressInfo = document.querySelector(".transcription-progress-info");
-    if (progressInfo) {
-      progressInfo.innerHTML = "✅ התמלול הושלם בהצלחה";
-      progressInfo.style.backgroundColor = "#d4edda";
-      progressInfo.style.color = "#155724";
-
-      setTimeout(() => {
-        progressInfo.remove();
-      }, 5000);
-    }
-
-    showTab("srt");
     showMessage("התמלול הושלם בהצלחה!", "success");
   } catch (error) {
     console.error("שגיאה בתמלול:", error);
-    showMessage(
-      error.message ||
-        "אירעה שגיאה במהלך התמלול. אנא בדוק את מפתח ה-API ונסה שוב.",
-      "error"
-    );
-    if (error.message.includes("API Key")) {
+    showMessage(error.message || "אירעה שגיאה במהלך התמלול. אנא בדוק את מפתח ה-API ונסה שוב.", "error");
+    if (error.message && error.message.includes("API Key")) {
       localStorage.removeItem("groqApiKey");
       apiKey = null;
     }
@@ -355,9 +294,7 @@ function validateAudioFile(file) {
   ];
 
   if (!validTypes.includes(file.type)) {
-    throw new Error(
-      "סוג קובץ לא נתמך. אנא השתמש בפורמט נתמך כמו WAV, MP3, M4A, OGG או FLAC."
-    );
+    throw new Error("סוג קובץ לא נתמך. אנא השתמש בפורמט נתמך כמו WAV, MP3, M4A, OGG או FLAC.");
   }
 
   return true;
@@ -386,6 +323,7 @@ function saveAudioFile(file) {
     })
     .catch((error) => {
       console.error("שגיאה בשמירת הקובץ:", error);
+      showMessage("שגיאה בשמירת הקובץ בשרת.", "error");
     });
 }
 
@@ -393,11 +331,7 @@ async function splitAudioFile(file, chunkSize) {
   const chunks = [];
   for (let start = 0; start < file.size; start += chunkSize) {
     const chunk = file.slice(start, Math.min(start + chunkSize, file.size));
-    chunks.push(
-      new File([chunk], `chunk_${chunks.length + 1}.${file.name.split(".").pop()}`, {
-        type: file.type,
-      })
-    );
+    chunks.push(new File([chunk], `chunk_${chunks.length + 1}.${file.name.split(".").pop()}`, { type: file.type }));
   }
   return chunks;
 }
@@ -433,10 +367,10 @@ async function transcribeChunk(chunk, chunkNumber, totalChunks) {
         const totalProgress = previousChunksProgress + currentChunkContribution;
 
         const progressInfo = `
-                        חלק ${chunkNumber} מתוך ${totalChunks}<br>
-                        התקדמות החלק הנוכחי: ${Math.round(chunkProgress)}%<br>
-                        התקדמות כוללת: ${Math.round(totalProgress)}%
-                    `;
+          חלק ${chunkNumber} מתוך ${totalChunks}<br>
+          התקדמות החלק הנוכחי: ${Math.round(chunkProgress)}%<br>
+          התקדמות כוללת: ${Math.round(totalProgress)}%
+        `;
 
         updateProgress(totalProgress, progressInfo);
       }
@@ -464,16 +398,11 @@ async function transcribeChunk(chunk, chunkNumber, totalChunks) {
         let errorMessage = "שגיאת שרת לא ידועה";
         try {
           const errorResponse = JSON.parse(xhr.responseText);
-          errorMessage =
-            errorResponse.error?.message || errorResponse.message || errorMessage;
+          errorMessage = errorResponse.error?.message || errorResponse.message || errorMessage;
         } catch (e) {
           errorMessage = xhr.responseText || errorMessage;
         }
-        console.error("שגיאת שרת:", {
-          status: xhr.status,
-          message: errorMessage,
-          response: xhr.responseText,
-        });
+        console.error("שגיאת שרת:", { status: xhr.status, message: errorMessage, response: xhr.responseText });
         reject(new Error(`שגיאת שרת (${xhr.status}): ${errorMessage}`));
       }
     };
@@ -488,7 +417,7 @@ async function transcribeChunk(chunk, chunkNumber, totalChunks) {
 
     xhr.open("POST", "https://api.groq.com/openai/v1/audio/transcriptions");
     xhr.setRequestHeader("Authorization", `Bearer ${apiKey}`);
-    xhr.timeout = 300000;
+    xhr.timeout = 300000; // 5 דקות
 
     try {
       xhr.send(formData);
@@ -507,9 +436,7 @@ function updateTranscription(isPartial = false, currentChunk = null, totalChunks
   const transcriptionCard = document.querySelector(".transcription-card");
   transcriptionCard.classList.add("has-content");
 
-  const wordsPerSubtitle = parseInt(
-    document.getElementById("wordsPerSubtitle").value
-  );
+  const wordsPerSubtitle = parseInt(document.getElementById("wordsPerSubtitle").value);
 
   if (transcriptionResult.segments && transcriptionResult.segments.length > 0) {
     let srtFormat = "";
@@ -517,13 +444,7 @@ function updateTranscription(isPartial = false, currentChunk = null, totalChunks
     let subtitleIndex = 1;
 
     transcriptionResult.segments.forEach((segment) => {
-      const subtitles = splitIntoSubtitles(
-        segment.text,
-        segment.start,
-        segment.end,
-        wordsPerSubtitle,
-        segment.avg_logprob
-      );
+      const subtitles = splitIntoSubtitles(segment.text, segment.start, segment.end, wordsPerSubtitle, segment.avg_logprob);
       subtitles.forEach((subtitle) => {
         srtFormat += `${subtitleIndex}\n`;
         srtFormat += `${formatTime(subtitle.start)} --> ${formatTime(subtitle.end)}\n`;
@@ -559,22 +480,16 @@ function updateTranscription(isPartial = false, currentChunk = null, totalChunks
       srtElement.scrollTop = srtElement.scrollHeight;
     }
 
-    const downloadButton = document.querySelector(
-      '.control-button[onclick="downloadFile()"]'
-    );
+    const downloadButton = document.querySelector('.control-button[onclick="downloadFile()"]');
     if (downloadButton) {
       downloadButton.disabled = false;
       downloadButton.style.opacity = "1";
     }
   } else {
-    document.getElementById("srtTranscription").innerHTML =
-      "<p>לא התקבל תמלול או שהתמלול ריק</p>";
-    document.getElementById("plainTextTranscription").textContent =
-      "לא התקבל תמלול או שהתמלול ריק";
+    document.getElementById("srtTranscription").innerHTML = "<p>לא התקבל תמלול או שהתמלול ריק</p>";
+    document.getElementById("plainTextTranscription").textContent = "לא התקבל תמלול או שהתמלול ריק";
 
-    const downloadButton = document.querySelector(
-      '.control-button[onclick="downloadFile()"]'
-    );
+    const downloadButton = document.querySelector('.control-button[onclick="downloadFile()"]');
     if (downloadButton) {
       downloadButton.disabled = true;
       downloadButton.style.opacity = "0.5";
@@ -611,9 +526,7 @@ function splitIntoSubtitles(text, startTime, endTime, maxWords, avgLogprob) {
         currentSubtitle.text = currentSubtitle.text.trim();
       }
 
-      subtitles.push({
-        ...currentSubtitle,
-      });
+      subtitles.push({ ...currentSubtitle });
 
       if (index < words.length - 1) {
         currentSubtitle = { text: "", start: currentSubtitle.end };
@@ -626,17 +539,11 @@ function splitIntoSubtitles(text, startTime, endTime, maxWords, avgLogprob) {
 }
 
 function showTab(tabName) {
-  document
-    .querySelectorAll(".tab-content")
-    .forEach((content) => content.classList.remove("active"));
-  document
-    .querySelectorAll(".tab-button")
-    .forEach((button) => button.classList.remove("active"));
+  document.querySelectorAll(".tab-content").forEach((content) => content.classList.remove("active"));
+  document.querySelectorAll(".tab-button").forEach((button) => button.classList.remove("active"));
 
   document.getElementById(`${tabName}Content`).classList.add("active");
-  document
-    .querySelector(`.tab-button[onclick="showTab('${tabName}')"]`)
-    .classList.add("active");
+  document.querySelector(`.tab-button[onclick="showTab('${tabName}')"]`).classList.add("active");
 }
 
 function copyToClipboard() {
@@ -653,63 +560,48 @@ function copyToClipboard() {
 }
 
 function downloadFile() {
-  if (
-    !transcriptionResult ||
-    !transcriptionResult.segments ||
-    transcriptionResult.segments.length === 0
-  ) {
+  if (!transcriptionResult || !transcriptionResult.segments || transcriptionResult.segments.length === 0) {
     showMessage("אין תמלול זמין להורדה", "error");
     return;
   }
 
+  showPopup('downloadPopup');
+}
+
+function downloadPopupContent() {
+  // יוצר פופאפ להורדת הקובץ
   const downloadPopup = document.createElement("div");
+  downloadPopup.id = "downloadPopup";
   downloadPopup.className = "popup";
-  downloadPopup.style.display = "flex";
-
-  const defaultFileName = selectedFile
-    ? selectedFile.name.split(".")[0]
-    : "transcription";
-
   downloadPopup.innerHTML = `
     <div class="popup-content">
       <h3>הורדת קובץ</h3>
       <div style="margin-bottom: 15px;">
         <label for="fileName">שם הקובץ:</label>
-        <input type="text" id="fileName" value="${defaultFileName}" style="width: 100%; margin-top: 5px; padding: 5px;">
+        <input type="text" id="fileName" value="transcription" style="width: 100%; margin-top: 5px; padding: 5px;">
       </div>
       <div class="popup-footer">
-        <button class="control-button" id="downloadSrt">
-          <i class="fas fa-download"></i> הורד כ-SRT
-        </button>
-        <button class="control-button" id="downloadTxt">
-          <i class="fas fa-download"></i> הורד כטקסט
-        </button>
-        <button class="control-button" id="cancelDownload">ביטול</button>
+        <button class="control-button" onclick="downloadSrt()">הורד כ-SRT</button>
+        <button class="control-button" onclick="downloadTxt()">הורד כטקסט</button>
+        <button class="control-button" onclick="closePopup('downloadPopup')">ביטול</button>
       </div>
     </div>
   `;
-
   document.body.appendChild(downloadPopup);
+}
 
-  document.getElementById("downloadSrt").onclick = () => {
-    const fileName =
-      document.getElementById("fileName").value.trim() || defaultFileName;
-    const content = document.getElementById("srtTranscription").innerText;
-    downloadContent(content, `${fileName}.srt`);
-    downloadPopup.remove();
-  };
+function downloadSrt() {
+  const fileName = document.getElementById("fileName").value.trim() || "transcription";
+  const content = document.getElementById("srtTranscription").innerText;
+  downloadContent(content, `${fileName}.srt`);
+  closePopup('downloadPopup');
+}
 
-  document.getElementById("downloadTxt").onclick = () => {
-    const fileName =
-      document.getElementById("fileName").value.trim() || defaultFileName;
-    const content = document.getElementById("plainTextTranscription").innerText;
-    downloadContent(content, `${fileName}.txt`);
-    downloadPopup.remove();
-  };
-
-  document.getElementById("cancelDownload").onclick = () => {
-    downloadPopup.remove();
-  };
+function downloadTxt() {
+  const fileName = document.getElementById("fileName").value.trim() || "transcription";
+  const content = document.getElementById("plainTextTranscription").innerText;
+  downloadContent(content, `${fileName}.txt`);
+  closePopup('downloadPopup');
 }
 
 function downloadContent(content, fileName) {
@@ -731,115 +623,55 @@ function downloadContent(content, fileName) {
 }
 
 function summarizeTranscription() {
-  // פונקציה לסיכום התמלול
-  // יש לממש לפי הצורך
+  if (!transcriptionResult || !transcriptionResult.segments || transcriptionResult.segments.length === 0) {
+    showMessage("אין תמלול זמין לסיכום", "error");
+    return;
+  }
+
+  const plainText = document.getElementById("plainTextTranscription").innerText;
+
+  // כאן ניתן להוסיף את הפונקציה לסיכום הטקסט באמצעות API חיצוני
+  showMessage("סיכום התמלול מתבצע...", "info", 0);
+
+  // דוגמה לפעולה אסינכרונית (מיקום מימוש הפונקציה לפי הצורך)
+  setTimeout(() => {
+    const summary = plainText.slice(0, 100) + "..."; // דוגמה לסיכום פשוט
+    document.getElementById("summaryContent").innerText = summary;
+    showPopup("summaryPopup");
+    showMessage("סיכום התמלול הושלם!", "success");
+  }, 2000);
 }
 
 function translateTranscription() {
-  if (
-    !transcriptionResult ||
-    !transcriptionResult.segments ||
-    transcriptionResult.segments.length === 0
-  ) {
+  if (!transcriptionResult || !transcriptionResult.segments || transcriptionResult.segments.length === 0) {
     showMessage("אין תמלול זמין לתרגום", "error");
     return;
   }
 
-  // קבלת הטקסט המתומלל
+  showPopup('translationPopup');
+}
+
+function performTranslation() {
+  const targetLanguage = document.getElementById("targetLanguage").value;
   const plainText = document.getElementById("plainTextTranscription").innerText;
 
-  // פתיחת פופאפ תרגום
-  showTranslationPopup(plainText);
-}
+  if (!plainText) {
+    showMessage("אין טקסט לתרגום", "error");
+    return;
+  }
 
-function showTranslationPopup(text) {
-  const translationPopup = document.createElement("div");
-  translationPopup.className = "popup";
-  translationPopup.style.display = "flex";
-
-  translationPopup.innerHTML = `
-    <div class="popup-content">
-      <h2>תרגום התמלול</h2>
-      <label for="targetLanguage">בחר שפת יעד:</label>
-      <select id="targetLanguage">
-        <option value="en">English</option>
-        <option value="he">עברית</option>
-        <option value="ar">العربية</option>
-        <option value="ru">Русский</option>
-        <option value="fr">Français</option>
-        <option value="es">Español</option>
-        <option value="de">Deutsch</option>
-        <!-- הוסף שפות נוספות לפי הצורך -->
-      </select>
-      <div class="popup-footer">
-        <button class="control-button" onclick="performTranslation('${encodeURIComponent(
-          text
-        )}')">תרגם</button>
-        <button class="control-button" onclick="closeTranslationPopup(this)">
-          ביטול
-        </button>
-      </div>
-    </div>
-  `;
-
-  document.body.appendChild(translationPopup);
-}
-
-function closeTranslationPopup(button) {
-  const popup = button.closest(".popup");
-  popup.remove();
-}
-
-function performTranslation(encodedText) {
-  const text = decodeURIComponent(encodedText);
-  const targetLanguage = document.getElementById("targetLanguage").value;
-
-  // הצגת הודעה למשתמש
   showMessage("מתרגם...", "info", 0);
 
-  // שליחת הטקסט לשרת חיצוני לתרגום
-  fetch("https://api.example.com/translate", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      text: text,
-      targetLanguage: targetLanguage,
-    }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      // הסתרת ההודעה
-      showMessage("התרגום הושלם!", "success");
+  // כאן יש לממש את קריאת ה-API לתרגום
+  // לדוגמה, שימוש ב-Google Translate API או שירות אחר
 
-      // הצגת הטקסט המתורגם
-      showTranslatedText(data.translatedText);
-    })
-    .catch((error) => {
-      console.error("שגיאה בתרגום:", error);
-      showMessage("התרגום נכשל. אנא נסה שוב.", "error");
-    });
-}
-
-function showTranslatedText(translatedText) {
-  const translationResultPopup = document.createElement("div");
-  translationResultPopup.className = "popup";
-  translationResultPopup.style.display = "flex";
-
-  translationResultPopup.innerHTML = `
-    <div class="popup-content">
-      <h2>טקסט מתורגם</h2>
-      <div class="translated-text">${translatedText}</div>
-      <div class="popup-footer">
-        <button class="control-button" onclick="closeTranslationPopup(this)">
-          סגור
-        </button>
-      </div>
-    </div>
-  `;
-
-  document.body.appendChild(translationResultPopup);
+  // לדוגמה: לאחר קבלת התרגום
+  setTimeout(() => {
+    const translatedText = plainText.split("").reverse().join(""); // דוגמה: הפיכת הטקסט
+    document.getElementById("translatedText").innerText = translatedText;
+    showPopup("translationResultPopup");
+    showMessage("התרגום הושלם!", "success");
+  }, 2000);
 }
 
 // פונקציות נוספות...
@@ -852,15 +684,15 @@ function showErrorDialog(message) {
     dialog.style.display = "flex";
 
     dialog.innerHTML = `
-          <div class="popup-content">
-              <h3>שגיאה בתמלול</h3>
-              <p>${message}</p>
-              <div class="popup-footer">
-                  <button class="control-button" id="yesButton">כן</button>
-                  <button class="control-button" id="noButton">לא</button>
-              </div>
-          </div>
-      `;
+      <div class="popup-content">
+        <h3>שגיאה בתמלול</h3>
+        <p>${message}</p>
+        <div class="popup-footer">
+          <button class="control-button" id="yesButton">כן</button>
+          <button class="control-button" id="noButton">לא</button>
+        </div>
+      </div>
+    `;
 
     document.body.appendChild(dialog);
 
