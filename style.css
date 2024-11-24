@@ -1,24 +1,24 @@
-/* General Styles */
+/* סגנונות כלליים */
 :root {
-  --primary-color: #1a1a1a; /* Dark background */
-  --secondary-color: #333333; /* Slightly lighter dark */
-  --background-color: #0d0d0d; /* Very dark background */
-  --text-color: #f0f0f0; /* Light text for contrast */
-  --accent-color: #444444; /* Dark gray for accents */
+  --primary-color: #2c3e50; /* כחול כהה נעים */
+  --secondary-color: #34495e; /* כחול כהה יותר */
+  --background-color: #ecf0f1; /* אפור בהיר לרקע */
+  --text-color: #2c3e50; /* טקסט בצבע כחול כהה */
+  --accent-color: #2980b9; /* כחול בהיר לאלמנטים בולטים */
   --border-radius: 8px;
   --transition: all 0.3s ease;
 }
 
 body {
-  font-family: "Roboto", sans-serif;
+  font-family: "Assistant", sans-serif;
   background-color: var(--background-color);
   color: var(--text-color);
   margin: 0;
   padding: 0;
-  direction: ltr;
+  direction: rtl;
 }
 
-/* Top Bar */
+/* סרגל עליון */
 header {
   background-color: var(--primary-color);
   display: flex;
@@ -32,7 +32,7 @@ header {
 header .logo {
   font-size: 1.5em;
   font-weight: 700;
-  color: var(--text-color);
+  color: #ffffff;
 }
 
 header nav {
@@ -50,16 +50,16 @@ header nav ul {
 
 header nav ul li a {
   text-decoration: none;
-  color: var(--text-color);
+  color: #ffffff;
   font-weight: 500;
   transition: var(--transition);
 }
 
 header nav ul li a:hover {
-  color: #ffffff;
+  color: #bdc3c7;
 }
 
-/* Menu Toggle for Mobile */
+/* כפתור תפריט למובייל */
 .menu-toggle {
   display: none;
 }
@@ -70,7 +70,7 @@ header nav ul li a:hover {
     background-color: var(--primary-color);
     position: absolute;
     top: 60px;
-    right: 0;
+    left: 0;
     width: 100%;
     display: none;
     padding: 10px 0;
@@ -88,17 +88,17 @@ header nav ul li a:hover {
     display: block;
     font-size: 1.5em;
     cursor: pointer;
-    color: var(--text-color);
-    margin-left: 15px;
+    color: #ffffff;
+    margin-right: 15px;
   }
 
   header nav {
     flex: 1;
-    justify-content: flex-end;
+    justify-content: flex-start;
   }
 }
 
-/* Main Area */
+/* אזור ראשי */
 main {
   padding: 20px;
   position: relative;
@@ -111,14 +111,14 @@ main {
 }
 
 .text-area {
-  background-color: var(--secondary-color);
+  background-color: #ffffff;
   padding: 20px;
   border-radius: var(--border-radius);
 }
 
 .text-area h2 {
   margin-top: 0;
-  color: var(--text-color);
+  color: var(--primary-color);
   font-weight: 500;
 }
 
@@ -136,7 +136,7 @@ main {
   line-height: 1.5;
 }
 
-/* Buttons */
+/* כפתורים */
 .primary-button,
 .secondary-button {
   padding: 15px 30px;
@@ -149,19 +149,19 @@ main {
 }
 
 .primary-button {
-  background-color: #4a4a4a;
+  background-color: var(--accent-color);
 }
 
 .primary-button:hover {
-  background-color: #5a5a5a;
+  background-color: #1f78b4;
 }
 
 .secondary-button {
-  background-color: #a80000;
+  background-color: #e74c3c;
 }
 
 .secondary-button:hover {
-  background-color: #cc0000;
+  background-color: #c0392b;
 }
 
 .additional-buttons {
@@ -172,7 +172,7 @@ main {
 }
 
 .action-button {
-  background-color: #3d3d3d;
+  background-color: var(--primary-color);
   color: #ffffff;
   border: none;
   padding: 10px 20px;
@@ -183,10 +183,10 @@ main {
 }
 
 .action-button:hover {
-  background-color: #505050;
+  background-color: var(--secondary-color);
 }
 
-/* Popups */
+/* פופאפים */
 .popup {
   display: none;
   position: fixed;
@@ -194,14 +194,14 @@ main {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(44, 62, 80, 0.8);
   justify-content: center;
   align-items: center;
   z-index: 1000;
 }
 
 .popup-content {
-  background-color: var(--secondary-color);
+  background-color: #ffffff;
   padding: 30px;
   border-radius: var(--border-radius);
   max-width: 500px;
@@ -219,7 +219,7 @@ main {
 .close-button {
   position: absolute;
   top: 15px;
-  left: 15px;
+  right: 15px;
   background: none;
   border: none;
   font-size: 1.5em;
@@ -227,35 +227,35 @@ main {
   color: var(--text-color);
 }
 
-/* Messages */
+/* הודעות */
 .message {
   position: fixed;
   top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
+  right: 50%;
+  transform: translateX(50%);
   padding: 10px 20px;
   border-radius: var(--border-radius);
   z-index: 1000;
   text-align: center;
-  background-color: #444444;
-  color: #ffffff;
+  background-color: #bdc3c7;
+  color: var(--text-color);
 }
 
 .message.success {
-  background-color: #28a745;
+  background-color: #2ecc71;
 }
 
 .message.error {
-  background-color: #dc3545;
+  background-color: #e74c3c;
 }
 
 .message.info {
-  background-color: #17a2b8;
+  background-color: #3498db;
 }
 
-/* Transcription Cards */
+/* כרטיסיות התמלול */
 .card {
-  background-color: var(--secondary-color);
+  background-color: #ffffff;
   padding: 20px;
   border-radius: var(--border-radius);
   margin-top: 20px;
@@ -269,7 +269,7 @@ main {
 .tab-button {
   flex: 1;
   padding: 10px;
-  background-color: #2b2b2b;
+  background-color: #ecf0f1;
   border: none;
   cursor: pointer;
   transition: var(--transition);
@@ -277,7 +277,7 @@ main {
 }
 
 .tab-button.active {
-  background-color: #3d3d3d;
+  background-color: #bdc3c7;
 }
 
 .tab-content {
@@ -304,10 +304,10 @@ main {
 .expand-button {
   position: absolute;
   bottom: -35px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #4a4a4a;
-  color: white;
+  right: 50%;
+  transform: translateX(50%);
+  background-color: var(--accent-color);
+  color: #ffffff;
   border: none;
   padding: 5px 15px;
   border-radius: var(--border-radius);
@@ -329,7 +329,10 @@ main {
   left: 0;
   right: 0;
   height: 50px;
-  background: linear-gradient(transparent, var(--secondary-color));
+  background: linear-gradient(
+    transparent,
+    #ffffff
+  );
   pointer-events: none;
   transition: opacity 0.3s ease;
 }
@@ -338,10 +341,10 @@ main {
   display: none;
 }
 
-/* Loader and Progress */
+/* טעינה והתקדמות */
 .loader {
-  border: 5px solid #2b2b2b;
-  border-top: 5px solid #5a5a5a;
+  border: 5px solid #ecf0f1;
+  border-top: 5px solid var(--accent-color);
   border-radius: 50%;
   width: 50px;
   height: 50px;
@@ -367,14 +370,14 @@ main {
 .progress-bar {
   width: 100%;
   height: 20px;
-  background-color: #2b2b2b;
+  background-color: #ecf0f1;
   border-radius: var(--border-radius);
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
-  background-color: #5a5a5a;
+  background-color: var(--accent-color);
   width: 0%;
   transition: width 0.3s ease;
 }
@@ -386,7 +389,7 @@ main {
   color: var(--text-color);
 }
 
-/* Responsive Design */
+/* עיצוב רספונסיבי */
 @media (max-width: 600px) {
   .main-buttons,
   .additional-buttons {
