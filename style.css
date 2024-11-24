@@ -102,6 +102,11 @@ header nav ul li a:hover {
   }
 }
 
+/* הודעת ברוכים הבאים */
+#welcomePopup .popup-content {
+  max-width: 400px;
+}
+
 /* אזור מרכזי */
 main {
   padding: 20px;
