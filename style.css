@@ -1,81 +1,143 @@
 /* סגנונות כלליים */
 :root {
-  --primary-color: #3498db;
-  --secondary-color: #2ecc71;
-  --background-color: #f5f7fa;
-  --text-color: #34495e;
-  --card-background: #ffffff;
-  --border-radius: 12px;
+  --primary-color: #005f99; /* כחול עמוק */
+  --secondary-color: #28a745; /* ירוק חי */
+  --background-color: #f9f9f9;
+  --text-color: #333333;
+  --accent-color: #17a2b8; /* תכלת לאלמנטים משניים */
+  --border-radius: 8px;
   --transition: all 0.3s ease;
 }
+
 body {
   font-family: "Heebo", sans-serif;
   background-color: var(--background-color);
   color: var(--text-color);
   margin: 0;
-  padding: 20px;
-  line-height: 1.6;
+  padding: 0;
 }
+
+/* סרגל עליון */
+header {
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+header .logo {
+  font-size: 1.5em;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+header nav ul {
+  list-style: none;
+  display: flex;
+  gap: 15px;
+  margin: 0;
+  padding: 0;
+}
+
+header nav ul li a {
+  text-decoration: none;
+  color: var(--text-color);
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+header nav ul li a:hover {
+  color: var(--primary-color);
+}
+
+/* אזור מרכזי */
+main {
+  padding: 20px;
+}
+
 .container {
   max-width: 800px;
   margin: 0 auto;
-  padding: 20px;
 }
-h1 {
+
+.text-area {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.text-area h2 {
+  margin-top: 0;
   color: var(--primary-color);
-  text-align: center;
-  font-size: 2.5em;
-  margin-bottom: 30px;
+  font-weight: 500;
 }
-.card {
-  position: relative;
-  background-color: var(--card-background);
-  border-radius: var(--border-radius);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  margin-bottom: 20px;
-  transition: var(--transition);
+
+.transcription-display {
+  min-height: 200px;
+  margin-top: 15px;
+  font-size: 1.2em;
+  line-height: 1.5;
+}
+
+.main-buttons {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+  margin: 30px 0;
 }
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-.control-button {
-  background-color: var(--primary-color);
-  color: white;
+
+.primary-button,
+.secondary-button {
+  padding: 15px 30px;
+  font-size: 1.1em;
   border: none;
-  padding: 10px 15px;
   border-radius: var(--border-radius);
   cursor: pointer;
-  font-size: 1em;
   transition: var(--transition);
-  width: 100%;
-  margin-bottom: 10px;
+  color: #ffffff;
 }
-.control-button:hover {
-  background-color: #2980b9;
+
+.primary-button {
+  background-color: var(--secondary-color);
 }
-#transcribeButton {
-  background-color: #4caf50;
-  color: white;
+
+.primary-button:hover {
+  background-color: #218838;
+}
+
+.secondary-button {
+  background-color: #dc3545;
+}
+
+.secondary-button:hover {
+  background-color: #c82333;
+}
+
+.additional-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.action-button {
+  background-color: var(--accent-color);
+  color: #ffffff;
   border: none;
-  padding: 12px 24px;
-  border-radius: 5px;
-  font-size: 16px;
+  padding: 10px 20px;
+  border-radius: var(--border-radius);
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: var(--transition);
+  font-size: 1em;
 }
-#transcribeButton:hover {
-  background-color: #45a049;
+
+.action-button:hover {
+  background-color: #138496;
 }
-#transcribeButton.stop {
-  background-color: #f44336;
-}
-#transcribeButton.stop:hover {
-  background-color: #da190b;
-}
+
+/* פופאפים */
 .popup {
   display: none;
   position: fixed;
@@ -88,225 +150,53 @@ h1 {
   align-items: center;
   z-index: 1000;
 }
+
 .popup-content {
-  background-color: var(--card-background);
+  background-color: #ffffff;
   padding: 30px;
   border-radius: var(--border-radius);
   max-width: 500px;
   width: 90%;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
-.tab-buttons {
-  display: flex;
-  margin-bottom: 20px;
-}
-.tab-button {
-  flex: 1;
-  padding: 10px;
-  background-color: #ecf0f1;
+
+.close-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
   border: none;
+  font-size: 1.2em;
   cursor: pointer;
-  transition: var(--transition);
-}
-.tab-button.active {
-  background-color: var(--primary-color);
-  color: white;
-}
-.tab-content {
-  display: none;
-  padding: 20px;
-  background-color: #ecf0f1;
-  border-radius: var(--border-radius);
-}
-.tab-content.active {
-  display: block;
-}
-#audioFile,
-#apiKeyInput {
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-  border: 1px solid #bdc3c7;
-  border-radius: var(--border-radius);
-}
-.loader {
-  border: 5px solid #f3f3f3;
-  border-top: 5px solid var(--primary-color);
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
-  margin: 20px auto;
-  display: none;
-}
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-.credit {
-  text-align: center;
-  margin-top: 20px;
-  font-size: 0.9em;
-}
-@media (max-width: 600px) {
-  .container {
-    padding: 10px;
-  }
-  h1 {
-    font-size: 2em;
-  }
-  .control-button {
-    font-size: 1.2em;
-    padding: 15px;
-  }
-}
-
-.youtube-promo {
-  background-color: var(--primary-color);
-  color: white;
-  text-align: center;
-  padding: 10px;
-  margin-bottom: 20px;
-}
-
-.youtube-promo a {
-  color: white;
-  text-decoration: underline;
-}
-
-.help-button {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background-color: var(--secondary-color);
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  font-size: 24px;
-  cursor: pointer;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  transition: var(--transition);
-}
-
-.help-button:hover {
-  transform: scale(1.1);
-}
-.progress-container {
-  margin: 20px 0;
-  display: none;
-}
-
-.progress-bar {
-  width: 100%;
-  height: 20px;
-  background-color: #ecf0f1;
-  border-radius: var(--border-radius);
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  background-color: var(--primary-color);
-  width: 0%;
-  transition: width 0.3s ease;
-}
-
-.progress-text {
-  text-align: center;
-  margin-top: 5px;
-  font-size: 0.9em;
   color: var(--text-color);
 }
 
-.transcription-container {
-  position: relative;
-  max-height: 200px;
-  overflow: hidden;
-  transition: max-height 0.3s ease;
-  margin-bottom: 40px;
-}
+/* התאמה למובייל */
+@media (max-width: 600px) {
+  header nav ul {
+    flex-direction: column;
+    background-color: #ffffff;
+    position: absolute;
+    top: 60px;
+    right: 0;
+    width: 100%;
+    display: none;
+  }
 
-.transcription-container.expanded {
-  max-height: none;
-  margin-bottom: 10px;
-}
+  header nav ul.show {
+    display: flex;
+  }
 
-.expand-button {
-  position: absolute;
-  bottom: -35px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  padding: 5px 15px;
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  z-index: 1;
-  transition: all 0.3s ease;
-}
+  header .menu-toggle {
+    display: block;
+    cursor: pointer;
+  }
 
-.expanded .expand-button {
-  position: static;
-  transform: none;
-  margin: 10px auto;
-  display: block;
-}
+  .main-buttons {
+    flex-direction: column;
+  }
 
-.transcription-fade {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 50px;
-  background: linear-gradient(transparent, var(--card-background));
-  pointer-events: none;
-  transition: opacity 0.3s ease;
+  .additional-buttons {
+    flex-direction: column;
+  }
 }
-
-.expanded .transcription-fade {
-  display: none;
-}
-
-.control-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-/* הודעות למשתמש */
-.message {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 10px 20px;
-  border-radius: 5px;
-  z-index: 1000;
-  text-align: center;
-}
-.message.error {
-  background-color: #f8d7da;
-  color: #721c24;
-}
-.message.success {
-  background-color: #d4edda;
-  color: #155724;
-}
-.message.info {
-  background-color: #cce5ff;
-  color: #004085;
-}
-
-/* סגנון לקטעים עם ביטחון נמוך */
-.low-confidence {
-  background-color: #fff3cd;
-  border-left: 4px solid #ffeeba;
-  padding: 5px;
-}
-
