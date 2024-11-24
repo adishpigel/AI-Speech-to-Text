@@ -22,15 +22,46 @@
       <div class="logo">AITexter</div>
       <nav>
         <ul>
-          <li><a href="#" onclick="showPopup('apiKeyPopup')">הגדר API Key</a></li>
-          <li><a href="#" onclick="showPopup('settingsPopup')">הגדרות</a></li>
-          <li><a href="#" onclick="showPopup('helpPopup')">עזרה</a></li>
+          <li>
+            <a href="#" onclick="showPopup('languagePopup')">
+              <i class="fas fa-language"></i> בחירת שפה
+            </a>
+          </li>
+          <li>
+            <a href="#" onclick="showPopup('apiKeyPopup')">
+              <i class="fas fa-key"></i> הגדר API Key
+            </a>
+          </li>
+          <li>
+            <a href="#" onclick="showPopup('settingsPopup')">
+              <i class="fas fa-cog"></i> הגדרות
+            </a>
+          </li>
+          <li>
+            <a href="#" onclick="showPopup('helpPopup')">
+              <i class="fas fa-question-circle"></i> עזרה
+            </a>
+          </li>
         </ul>
         <div class="menu-toggle" onclick="toggleMenu()">
           <i class="fas fa-bars"></i>
         </div>
       </nav>
     </header>
+
+    <!-- הודעה קופצת בעת עליית העמוד -->
+    <div id="welcomePopup" class="popup">
+      <div class="popup-content">
+        <h2>ברוכים הבאים ל-AITexter</h2>
+        <p>
+          קובץ האודיו שלך יישמר בהתאם להגדרות שלך, מ'לא ישמר כלל' ועד 24 שעות.
+          בכל מקרה, הקובץ יימחק אוטומטית לאחר 24 שעות.
+        </p>
+        <button class="control-button" onclick="closePopup('welcomePopup')">
+          סגור
+        </button>
+      </div>
+    </div>
 
     <!-- אזור מרכזי -->
     <main>
@@ -52,7 +83,11 @@
 
         <!-- כפתורים עיקריים -->
         <div class="main-buttons">
-          <button class="primary-button" id="transcribeButton" onclick="transcribe()">
+          <button
+            class="primary-button"
+            id="transcribeButton"
+            onclick="transcribe()"
+          >
             <i class="fas fa-play"></i> התחל תמלול
           </button>
           <button
@@ -120,6 +155,31 @@
     </main>
 
     <!-- פופאפים -->
+    <!-- Popup לבחירת שפה -->
+    <div id="languagePopup" class="popup">
+      <div class="popup-content">
+        <h2>בחר שפה לתמלול</h2>
+        <select id="languageSelectMain">
+          <option value="">זיהוי אוטומטי</option>
+          <option value="he">עברית</option>
+          <option value="en">אנגלית</option>
+          <option value="ar">ערבית</option>
+          <option value="ru">רוסית</option>
+          <option value="fr">צרפתית</option>
+          <option value="es">ספרדית</option>
+          <option value="de">גרמנית</option>
+        </select>
+        <div class="popup-footer">
+          <button class="control-button" onclick="saveLanguageSelection()">
+            שמור
+          </button>
+          <button class="control-button" onclick="closePopup('languagePopup')">
+            ביטול
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Popup להגדרת API Key -->
     <div id="apiKeyPopup" class="popup">
       <div class="popup-content">
@@ -155,6 +215,18 @@
             accept="audio/*"
             onchange="handleFileSelect(event)"
           />
+          <!-- הוספת אפשרות לבחירת זמן שמירת הקובץ -->
+          <div style="margin-top: 15px;">
+            <label for="fileRetention">משך זמן שמירת הקובץ:</label>
+            <select id="fileRetention">
+              <option value="0">לא לשמור</option>
+              <option value="1">1 שעה</option>
+              <option value="2" selected>2 שעות</option>
+              <option value="6">6 שעות</option>
+              <option value="12">12 שעות</option>
+              <option value="24">24 שעות</option>
+            </select>
+          </div>
         </div>
         <div id="recordInputTab" class="tab-content">
           <button
@@ -169,6 +241,18 @@
             <button class="control-button" onclick="deleteRecording()">
               מחק הקלטה
             </button>
+          </div>
+          <!-- הוספת אפשרות לבחירת זמן שמירת הקובץ -->
+          <div style="margin-top: 15px;">
+            <label for="recordRetention">משך זמן שמירת הקובץ:</label>
+            <select id="recordRetention">
+              <option value="0">לא לשמור</option>
+              <option value="1">1 שעה</option>
+              <option value="2" selected>2 שעות</option>
+              <option value="6">6 שעות</option>
+              <option value="12">12 שעות</option>
+              <option value="24">24 שעות</option>
+            </select>
           </div>
         </div>
         <div class="popup-footer">
@@ -197,19 +281,6 @@
             <option value="8" selected>8</option>
             <option value="10">10</option>
             <option value="12">12</option>
-          </select>
-        </div>
-        <div style="margin-bottom: 15px;">
-          <label for="languageSelect">שפת התמלול:</label>
-          <select id="languageSelect">
-            <option value="">זיהוי אוטומטי</option>
-            <option value="he">עברית</option>
-            <option value="en">אנגלית</option>
-            <option value="ar">ערבית</option>
-            <option value="ru">רוסית</option>
-            <option value="fr">צרפתית</option>
-            <option value="es">ספרדית</option>
-            <option value="de">גרמנית</option>
           </select>
         </div>
         <div class="popup-footer">
@@ -241,6 +312,7 @@
         <ol>
           <li>הזינו את מפתח ה-API</li>
           <li>בחרו קובץ אודיו או הקליטו ישירות באתר</li>
+          <li>בחרו את משך זמן שמירת הקובץ</li>
           <li>לחצו על "התחל תמלול"</li>
           <li>המתינו לתוצאות ובחרו בין פורמט SRT לטקסט רגיל</li>
         </ol>
