@@ -612,4 +612,157 @@ function showTab(tabName) {
     .querySelectorAll(".tab-content")
     .forEach((content) => content.classList.remove("active"));
   document
-    .que
+    .querySelectorAll(".tab-button")
+    .forEach((button) => button.classList.remove("active"));
+
+  document.getElementById(`${tabName}Content`).classList.add("active");
+  document
+    .querySelector(`.tab-button[onclick="showTab('${tabName}')"]`)
+    .classList.add("active");
+}
+
+function copyToClipboard() {
+  const text = document.querySelector(".tab-content.active").innerText;
+  navigator.clipboard.writeText(text).then(
+    () => {
+      showMessage("הטקסט הועתק ללוח", "success");
+    },
+    (err) => {
+      console.error("שגיאה בהעתקה: ", err);
+      showMessage("שגיאה בהעתקת הטקסט", "error");
+    }
+  );
+}
+
+function downloadFile() {
+  if (
+    !transcriptionResult ||
+    !transcriptionResult.segments ||
+    transcriptionResult.segments.length === 0
+  ) {
+    showMessage("אין תמלול זמין להורדה", "error");
+    return;
+  }
+
+  const downloadPopup = document.createElement("div");
+  downloadPopup.className = "popup";
+  downloadPopup.style.display = "flex";
+
+  const defaultFileName = selectedFile
+    ? selectedFile.name.split(".")[0]
+    : "transcription";
+
+  downloadPopup.innerHTML = `
+    <div class="popup-content">
+      <h3>הורדת קובץ</h3>
+      <div style="margin-bottom: 15px;">
+        <label for="fileName">שם הקובץ:</label>
+        <input type="text" id="fileName" value="${defaultFileName}" style="width: 100%; margin-top: 5px; padding: 5px;">
+      </div>
+      <div class="popup-footer">
+        <button class="control-button" id="downloadSrt">
+          <i class="fas fa-download"></i> הורד כ-SRT
+        </button>
+        <button class="control-button" id="downloadTxt">
+          <i class="fas fa-download"></i> הורד כטקסט
+        </button>
+        <button class="control-button" id="cancelDownload">ביטול</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(downloadPopup);
+
+  document.getElementById("downloadSrt").onclick = () => {
+    const fileName =
+      document.getElementById("fileName").value.trim() || defaultFileName;
+    const content = document.getElementById("srtTranscription").innerText;
+    downloadContent(content, `${fileName}.srt`);
+    downloadPopup.remove();
+  };
+
+  document.getElementById("downloadTxt").onclick = () => {
+    const fileName =
+      document.getElementById("fileName").value.trim() || defaultFileName;
+    const content = document.getElementById(
+      "plainTextTranscription"
+    ).innerText;
+    downloadContent(content, `${fileName}.txt`);
+    downloadPopup.remove();
+  };
+
+  document.getElementById("cancelDownload").onclick = () => {
+    downloadPopup.remove();
+  };
+}
+
+function downloadContent(content, fileName) {
+  let mimeType = "text/plain;charset=utf-8";
+
+  if (fileName.endsWith(".srt")) {
+    mimeType = "application/x-subrip;charset=utf-8";
+  }
+
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function summarizeTranscription() {
+  // פונקציה לסיכום התמלול
+  // יש לממש בהתאם לצורך
+}
+
+// פונקציות נוספות...
+
+// פונקציה להצגת דיאלוג שגיאה
+function showErrorDialog(message) {
+  return new Promise((resolve) => {
+    const dialog = document.createElement("div");
+    dialog.className = "popup";
+    dialog.style.display = "flex";
+
+    dialog.innerHTML = `
+          <div class="popup-content">
+              <h3>שגיאה בתמלול</h3>
+              <p>${message}</p>
+              <div class="popup-footer">
+                  <button class="control-button" id="yesButton">כן</button>
+                  <button class="control-button" id="noButton">לא</button>
+              </div>
+          </div>
+      `;
+
+    document.body.appendChild(dialog);
+
+    document.getElementById("yesButton").onclick = () => {
+      dialog.remove();
+      resolve(true);
+    };
+
+    document.getElementById("noButton").onclick = () => {
+      dialog.remove();
+      resolve(false);
+    };
+  });
+}
+
+function toggleTranscription(button) {
+  const container = button.closest(".transcription-container");
+  const isExpanded = container.classList.contains("expanded");
+
+  container.classList.toggle("expanded");
+  button.textContent = isExpanded ? "הצג הכל" : "הצג פחות";
+}
+
+// פונקציה לפתיחת וסגירת התפריט במובייל
+function toggleMenu() {
+  const nav = document.querySelector("header nav ul");
+  nav.classList.toggle("show");
+}
