@@ -3,61 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>תמלול ותרגום מתקדם</title>
+    <title>תמלול אודיו מתקדם</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/jszip@3.7.1/dist/jszip.min.js"></script>
 </head>
 <body class="bg-gray-100 p-4">
-    <div class="max-w-4xl mx-auto">
-        <!-- כותרת אפליקציה -->
-        <h1 class="text-3xl font-bold text-center mb-8 text-blue-600">אפליקציית תמלול מתקדמת</h1>
+    <div class="max-w-3xl mx-auto">
+        <!-- כותרת ראשית -->
+        <h1 class="text-3xl font-bold text-center mb-8 text-blue-600">
+            מערכת תמלול מתקדמת
+        </h1>
 
-        <!-- בחירת מקור קלט -->
+        <!-- אזור API Keys -->
         <div class="bg-white shadow-md rounded-lg p-6 mb-4">
-            <h2 class="text-xl font-semibold mb-4">בחר שיטת הקלדה</h2>
+            <h2 class="text-xl font-semibold mb-4">🔑 מפתחות API</h2>
             <div class="grid grid-cols-3 gap-4">
-                <button onclick="showFileUpload()" class="bg-blue-500 text-white p-3 rounded hover:bg-blue-600">
+                <div>
+                    <label class="block mb-2">Whisper API Key</label>
+                    <input type="password" id="whisperApiKey" class="w-full p-2 border rounded" placeholder="מפתח Whisper">
+                </div>
+                <div>
+                    <label class="block mb-2">Google API Key</label>
+                    <input type="password" id="googleApiKey" class="w-full p-2 border rounded" placeholder="מפתח Google">
+                </div>
+                <div>
+                    <label class="block mb-2">Groq API Key</label>
+                    <input type="password" id="groqApiKey" class="w-full p-2 border rounded" placeholder="מפתח Groq">
+                </div>
+            </div>
+        </div>
+
+        <!-- בחירת שיטת קלט -->
+        <div class="bg-white shadow-md rounded-lg p-6 mb-4">
+            <h2 class="text-xl font-semibold mb-4">📥 בחירת שיטת קלט</h2>
+            <div class="grid grid-cols-3 gap-4">
+                <button onclick="selectInputMethod('file')" class="bg-blue-500 text-white p-3 rounded hover:bg-blue-600">
                     העלאת קובץ
                 </button>
-                <button onclick="startMicrophoneRecording()" class="bg-green-500 text-white p-3 rounded hover:bg-green-600">
-                    הקלטה מהמיקרופון
+                <button onclick="selectInputMethod('microphone')" class="bg-green-500 text-white p-3 rounded hover:bg-green-600">
+                    הקלדה מהמיקרופון
                 </button>
-                <button onclick="showManualInput()" class="bg-purple-500 text-white p-3 rounded hover:bg-purple-600">
-                    הקלדה ידנית
+                <button onclick="selectInputMethod('realtime')" class="bg-purple-500 text-white p-3 rounded hover:bg-purple-600">
+                    הקלדה בזמן אמת
                 </button>
             </div>
         </div>
 
-        <!-- העלאת קובץ -->
-        <div id="fileUploadSection" class="hidden bg-white shadow-md rounded-lg p-6 mb-4">
-            <input type="file" id="audioFile" accept="audio/*" class="w-full p-2 border rounded">
-            <div id="fileProgress" class="mt-4 w-full bg-gray-200 rounded-full h-2.5">
-                <div id="fileProgressBar" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
-            </div>
+        <!-- קלט קבצים -->
+        <div id="fileInputSection" class="hidden bg-white shadow-md rounded-lg p-6 mb-4">
+            <input type="file" id="audioFile" accept="audio/*" class="w-full">
+            <div id="fileInfo" class="mt-2 text-sm text-gray-600"></div>
         </div>
 
-        <!-- הקלטה מהמיקרופון -->
-        <div id="microphoneSection" class="hidden bg-white shadow-md rounded-lg p-6 mb-4">
+        <!-- קלט מיקרופון -->
+        <div id="microphoneInputSection" class="hidden bg-white shadow-md rounded-lg p-6 mb-4">
             <div class="flex justify-between items-center">
-                <button id="startRecording" onclick="startRecording()" class="bg-green-500 text-white p-3 rounded">
+                <button id="startRecording" onclick="startMicrophoneRecording()" class="bg-green-500 text-white p-3 rounded">
                     התחל הקלטה
                 </button>
-                <button id="stopRecording" onclick="stopRecording()" class="bg-red-500 text-white p-3 rounded" disabled>
+                <button id="stopRecording" onclick="stopMicrophoneRecording()" class="bg-red-500 text-white p-3 rounded" disabled>
                     עצור הקלטה
                 </button>
             </div>
             <div id="recordingTimer" class="text-center text-xl mt-4">00:00</div>
         </div>
 
-        <!-- הקלדה ידנית -->
-        <div id="manualInputSection" class="hidden bg-white shadow-md rounded-lg p-6 mb-4">
-            <textarea id="manualText" class="w-full h-40 p-2 border rounded" placeholder="הקלד את הטקסט כאן..."></textarea>
+        <!-- הקלדה בזמן אמת -->
+        <div id="realtimeInputSection" class="hidden bg-white shadow-md rounded-lg p-6 mb-4">
+            <textarea id="realtimeText" class="w-full h-40 p-2 border rounded" 
+                     placeholder="התחל להקליד כאן..."
+                     oninput="performRealtimeTranscription()"></textarea>
+            <div id="realtimeTranscription" class="mt-4 bg-gray-100 p-2 rounded"></div>
         </div>
 
         <!-- הגדרות מתקדמות -->
         <div class="bg-white shadow-md rounded-lg p-6 mb-4">
-            <h2 class="text-xl font-semibold mb-4">הגדרות מתקדמות</h2>
-            <div class="grid grid-cols-2 gap-4">
+            <h2 class="text-xl font-semibold mb-4">⚙️ הגדרות מתקדמות</h2>
+            <div class="grid grid-cols-3 gap-4">
                 <div>
                     <label class="block mb-2">שפת מקור</label>
                     <select id="sourceLanguage" class="w-full p-2 border rounded">
@@ -68,184 +89,182 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block mb-2">שפת יעד</label>
-                    <select id="targetLanguage" class="w-full p-2 border rounded">
-                        <option value="">ללא תרגום</option>
-                        <option value="he">עברית</option>
-                        <option value="en">אנגלית</option>
-                        <option value="ar">ערבית</option>
+                    <label class="block mb-2">איכות תמלול</label>
+                    <select id="transcriptionQuality" class="w-full p-2 border rounded">
+                        <option value="high">איכות גבוהה</option>
+                        <option value="medium">איכות בינונית</option>
+                        <option value="fast">מהירות מקסימלית</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block mb-2">מנוע תמלול</label>
+                    <select id="transcriptionEngine" class="w-full p-2 border rounded">
+                        <option value="whisper">Whisper</option>
+                        <option value="google">Google</option>
+                        <option value="groq">Groq</option>
                     </select>
                 </div>
             </div>
         </div>
 
-        <!-- התקדמות ותוצאות -->
-        <div id="processingSection" class="hidden bg-white shadow-md rounded-lg p-6">
-            <h2 class="text-xl font-semibold mb-4">סטטוס עיבוד</h2>
-            <div class="w-full bg-gray-200 rounded-full h-4">
-                <div id="overallProgressBar" class="bg-blue-600 h-4 rounded-full" style="width: 0%"></div>
+        <!-- סרגל התקדמות -->
+        <div id="progressSection" class="hidden bg-white shadow-md rounded-lg p-6 mb-4">
+            <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+                <div id="progressBar" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
             </div>
-            <div id="processStages" class="mt-4">
-                <div class="flex items-center mb-2">
-                    <span id="uploadStage" class="mr-4">העלאה</span>
-                    <span id="uploadStatus" class="text-gray-500">ממתין</span>
-                </div>
-                <div class="flex items-center mb-2">
-                    <span id="processingStage" class="mr-4">עיבוד</span>
-                    <span id="processingStatus" class="text-gray-500">ממתין</span>
-                </div>
-                <div class="flex items-center mb-2">
-                    <span id="transcriptionStage" class="mr-4">תמלול</span>
-                    <span id="transcriptionStatus" class="text-gray-500">ממתין</span>
-                </div>
-                <div class="flex items-center">
-                    <span id="translationStage" class="mr-4">תרגום</span>
-                    <span id="translationStatus" class="text-gray-500">ממתין</span>
-                </div>
+            <div id="progressStages" class="flex justify-between">
+                <span id="uploadStage">העלאה</span>
+                <span id="processStage">עיבוד</span>
+                <span id="transcribeStage">תמלול</span>
+                <span id="finalizeStage">סיום</span>
             </div>
         </div>
 
         <!-- תוצאות -->
-        <div id="resultsSection" class="hidden bg-white shadow-md rounded-lg p-6 mt-4">
-            <h2 class="text-xl font-semibold mb-4">תוצאות</h2>
-            <div id="transcriptionResults" class="bg-gray-100 p-4 rounded mb-4"></div>
-            <div class="flex space-x-4">
-                <button onclick="copyResults()" class="bg-blue-500 text-white p-2 rounded flex-1">העתק</button>
-                <button onclick="downloadResults()" class="bg-green-500 text-white p-2 rounded flex-1">הורד</button>
+        <div id="resultSection" class="hidden bg-white shadow-md rounded-lg p-6">
+            <h3 class="font-bold mb-4">תוצאות התמלול</h3>
+            <div id="transcriptionResult" class="bg-gray-50 p-4 rounded mb-4 whitespace-pre-wrap"></div>
+            <div class="flex gap-2">
+                <button onclick="copyResult()" class="flex-1 bg-gray-500 text-white p-2 rounded">העתק</button>
+                <button onclick="downloadResult()" class="flex-1 bg-green-500 text-white p-2 rounded">הורד</button>
             </div>
         </div>
     </div>
 
     <script>
-        // משתנים גלובליים
-        let mediaRecorder;
-        let audioChunks = [];
-        let recordingTimer;
-        let recordingDuration = 0;
-
-        // פונקציות ניהול מצבים
-        function showFileUpload() {
-            resetSections();
-            document.getElementById('fileUploadSection').classList.remove('hidden');
+        // מצבי קלט
+        function selectInputMethod(method) {
+            ['fileInputSection', 'microphoneInputSection', 'realtimeInputSection']
+                .forEach(id => document.getElementById(id).classList.add('hidden'));
+            
+            document.getElementById(`${method}InputSection`).classList.remove('hidden');
         }
 
+        // הקלטה מהמיקרופון
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let recordingTimer = null;
+
         function startMicrophoneRecording() {
-            resetSections();
-            document.getElementById('microphoneSection').classList.remove('hidden');
             navigator.mediaDevices.getUserMedia({ audio: true })
                 .then(stream => {
                     mediaRecorder = new MediaRecorder(stream);
-                    
+                    audioChunks = [];
+
                     mediaRecorder.ondataavailable = (event) => {
                         audioChunks.push(event.data);
                     };
 
                     mediaRecorder.onstop = () => {
                         const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-                        // כאן תוכל להוסיף את הקובץ לתהליך התמלול
                         processAudioFile(audioBlob);
                     };
 
                     mediaRecorder.start();
+                    startRecordingTimer();
+
                     document.getElementById('startRecording').disabled = true;
                     document.getElementById('stopRecording').disabled = false;
-                    startTimer();
                 });
         }
 
-        function startTimer() {
-            recordingTimer = setInterval(() => {
-                recordingDuration++;
-                const minutes = Math.floor(recordingDuration / 60).toString().padStart(2, '0');
-                const seconds = (recordingDuration % 60).toString().padStart(2, '0');
-                document.getElementById('recordingTimer').textContent = `${minutes}:${seconds}`;
-            }, 1000);
-        }
-
-        function stopRecording() {
-            mediaRecorder.stop();
-            clearInterval(recordingTimer);
-            document.getElementById('startRecording').disabled = false;
-            document.getElementById('stopRecording').disabled = true;
-        }
-
-        function showManualInput() {
-            resetSections();
-            document.getElementById('manualInputSection').classList.remove('hidden');
-        }
-
-        function resetSections() {
-            ['fileUploadSection', 'microphoneSection', 'manualInputSection', 
-             'processingSection', 'resultsSection'].forEach(id => {
-                document.getElementById(id).classList.add('hidden');
-            });
-        }
-
-        function processAudioFile(file) {
-            const processingSection = document.getElementById('processingSection');
-            processingSection.classList.remove('hidden');
-
-            // סימולציית התקדמות
-            updateProgressStage('uploadStage', 'בתהליך');
-            updateOverallProgress(25);
-
-            // סימולציית עיבוד
-            setTimeout(() => {
-                updateProgressStage('processingStage', 'בתהליך');
-                updateOverallProgress(50);
-            }, 1000);
-
-            // סימולציית תמלול
-            setTimeout(() => {
-                updateProgressStage('transcriptionStage', 'הושלם');
-                updateOverallProgress(75);
-                displayResults('תמליל הטקסט יופיע כאן...');
-            }, 2000);
-        }
-
-        function updateProgressStage(stageId, status) {
-            const stageElement = document.getElementById(stageId);
-            const statusElement = document.getElementById(`${stageId.replace('Stage', 'Status')}`);
-            
-            statusElement.textContent = status;
-            statusElement.classList.remove('text-gray-500');
-            
-            if (status === 'הושלם') {
-                statusElement.classList.add('text-green-500');
-            } else if (status === 'בתהליך') {
-                statusElement.classList.add('text-blue-500');
+        function stopMicrophoneRecording() {
+            if (mediaRecorder) {
+                mediaRecorder.stop();
+                clearInterval(recordingTimer);
+                
+                document.getElementById('startRecording').disabled = false;
+                document.getElementById('stopRecording').disabled = true;
+                document.getElementById('recordingTimer').textContent = '00:00';
             }
         }
 
-        function updateOverallProgress(percentage) {
-            document.getElementById('overallProgressBar').style.width = `${percentage}%`;
+        function startRecordingTimer() {
+            let seconds = 0;
+            recordingTimer = setInterval(() => {
+                seconds++;
+                const minutes = Math.floor(seconds / 60).toString().padStart(2, '0');
+                const remainingSeconds = (seconds % 60).toString().padStart(2, '0');
+                document.getElementById('recordingTimer').textContent = `${minutes}:${remainingSeconds}`;
+            }, 1000);
         }
 
-        function displayResults(text) {
-            const resultsSection = document.getElementById('resultsSection');
-            const transcriptionResults = document.getElementById('transcriptionResults');
+        // תמלול בזמן אמת
+        function performRealtimeTranscription() {
+            const text = document.getElementById('realtimeText').value;
+            const transcriptionDiv = document.getElementById('realtimeTranscription');
             
-            transcriptionResults.textContent = text;
-            resultsSection.classList.remove('hidden');
-            updateProgressStage('translationStage', 'הושלם');
-            updateOverallProgress(100);
+            // סימולציה של תמלול - יש להחליף בקריאת API אמיתית
+            transcriptionDiv.textContent = text.length > 0 
+                ? `מילים: ${text.split(' ').length}, תווים: ${text.length}` 
+                : '';
         }
 
-        function copyResults() {
-            const text = document.getElementById('transcriptionResults').textContent;
-            navigator.clipboard.writeText(text).then(() => {
-                alert('טקסט הועתק בהצלחה!');
+        // עיבוד קובץ אודיו
+        function processAudioFile(file) {
+            const progressSection = document.getElementById('progressSection');
+            const resultSection = document.getElementById('resultSection');
+            
+            progressSection.classList.remove('hidden');
+            resultSection.classList.add('hidden');
+
+            // סימולציית התקדמות
+            updateProgress(25, 'העלאת קובץ');
+            
+            setTimeout(() => {
+                updateProgress(50, 'עיבוד קובץ');
+            }, 1000);
+
+            setTimeout(() => {
+                updateProgress(75, 'תמלול');
+            }, 2000);
+
+            setTimeout(() => {
+                updateProgress(100, 'הושלם');
+                showTranscriptionResult('תמליל הטקסט יוצג כאן...');
+            }, 3000);
+        }
+
+        // עדכון סרגל התקדמות
+        function updateProgress(percentage, stage) {
+            const progressBar = document.getElementById('progressBar');
+            const stageElements = document.querySelectorAll('#progressStages span');
+            
+            progressBar.style.width = `${percentage}%`;
+            
+            stageElements.forEach((el, index) => {
+                el.classList.remove('font-bold', 'text-blue-600');
+                if (index < Math.floor(percentage / 25)) {
+                    el.classList.add('font-bold', 'text-blue-600');
+                }
             });
         }
 
-        function downloadResults() {
-            const text = document.getElementById('transcriptionResults').textContent;
+        // הצגת תוצאות
+        function showTranscriptionResult(text) {
+            const resultSection = document.getElementById('resultSection');
+            const transcriptionResult = document.getElementById('transcriptionResult');
+            
+            transcriptionResult.textContent = text;
+            resultSection.classList.remove('hidden');
+        }
+
+        // העתקת תוצאה
+        function copyResult() {
+            const text = document.getElementById('transcriptionResult').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('הטקסט הועתק בהצלחה');
+            });
+        }
+
+        // הורדת תוצאה
+        function downloadResult() {
+            const text = document.getElementById('transcriptionResult').textContent;
             const blob = new Blob([text], {type: 'text/plain'});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'transcription.txt';
-            a.click();
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'transcription.txt';
+            link.click();
         }
     </script>
 </body>
