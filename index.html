@@ -2,48 +2,96 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Super Texter - תמלול אודיו</title>
+    <title>Super Texter - תמלול אודיו מתקדם</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <div id="app" class="container">
-        <h1>Super Texter</h1>
-        
-        <div id="apiKeyManager" class="api-key-section">
-            <h2>ניהול API Key</h2>
-            <div class="api-key-input">
-                <input type="password" id="apiKeyInput" placeholder="הזן API Key">
+    <div class="app-container">
+        <header>
+            <h1>Super Texter</h1>
+            <button id="helpButton" class="help-button" title="מדריך למשתמש">
+                <i class="fas fa-question-circle"></i>
+            </button>
+        </header>
+
+        <!-- מודל API Key -->
+        <div id="apiKeyModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button">&times;</span>
+                <h2>הגדרת API Key</h2>
+                <input type="password" id="apiKeyInput" placeholder="הזן את המפתח שלך">
+                <div class="api-sources">
+                    <a href="https://console.groq.com/keys" target="_blank" class="api-source">
+                        <i class="fab fa-grunt"></i> Groq
+                    </a>
+                    <a href="https://platform.openai.com/account/api-keys" target="_blank" class="api-source">
+                        <i class="fab fa-openai"></i> OpenAI
+                    </a>
+                </div>
                 <button id="saveApiKeyBtn">שמור מפתח</button>
-                <a href="https://console.groq.com/keys" target="_blank" class="get-api-key-link">
-                    קבל מפתח API חדש
-                </a>
+                <div id="apiKeyStatus" class="status-message"></div>
             </div>
-            <div id="apiKeyStatus" class="api-key-status"></div>
         </div>
 
-        <div id="transcriptionPanel">
+        <!-- מודל עזרה -->
+        <div id="helpModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button">&times;</span>
+                <h2>מדריך למשתמש</h2>
+                <div class="help-steps">
+                    <div class="help-step">
+                        <i class="fas fa-key"></i>
+                        <h3>שלב 1: API Key</h3>
+                        <p>הגדר API Key מ-Groq או OpenAI לביצוע תמלול</p>
+                    </div>
+                    <div class="help-step">
+                        <i class="fas fa-upload"></i>
+                        <h3>שלב 2: העלאת קובץ</h3>
+                        <p>העלה קובץ אודיו או הקלט ישירות מהמיקרופון</p>
+                    </div>
+                    <div class="help-step">
+                        <i class="fas fa-magic"></i>
+                        <h3>שלב 3: תמלול</h3>
+                        <p>קבל תמליל מדויק עם אפשרויות עריכה והורדה</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- פאנל תמלול -->
+        <div class="transcription-panel">
             <div class="input-methods">
-                <button id="fileUploadBtn">העלאת קובץ</button>
-                <button id="recordBtn">הקלטה</button>
+                <button id="fileUploadBtn" class="method-btn">
+                    <i class="fas fa-file-upload"></i> העלאת קובץ
+                </button>
+                <button id="recordBtn" class="method-btn">
+                    <i class="fas fa-microphone"></i> הקלטה
+                </button>
                 <input type="file" id="audioFileInput" accept="audio/*" style="display:none;">
             </div>
-            
+
             <div id="progressContainer" class="progress-container hidden">
                 <div id="progressBar" class="progress-bar"></div>
                 <div id="progressText" class="progress-text"></div>
             </div>
 
-            <div id="transcriptionResult" class="hidden">
+            <div id="transcriptionResult" class="transcription-result hidden">
                 <h2>תוצאות התמלול</h2>
-                <pre id="transcriptionText"></pre>
-                <div class="actions">
-                    <button id="copyBtn">העתק</button>
-                    <button id="downloadBtn">הורד</button>
+                <div class="result-actions">
+                    <button id="copyBtn" class="action-btn">
+                        <i class="fas fa-copy"></i> העתק
+                    </button>
+                    <button id="downloadBtn" class="action-btn">
+                        <i class="fas fa-download"></i> הורד
+                    </button>
                 </div>
+                <pre id="transcriptionText" class="transcription-text"></pre>
             </div>
         </div>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
