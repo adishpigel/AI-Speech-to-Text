@@ -2,204 +2,29 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <title>Super Texter - תמלול אודיו</title>
+    <link rel="stylesheet" href="styles.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>תמלול אודיו מתקדם</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100 p-4">
-    <div class="max-w-3xl mx-auto">
-        <h1 class="text-3xl font-bold text-center mb-8 text-blue-600">
-            מערכת תמלול מתקדמת
-        </h1>
-
-        <!-- אזור API Keys עם קישורים ישירים -->
-        <div class="bg-white shadow-md rounded-lg p-6 mb-4">
-            <h2 class="text-xl font-semibold mb-4">🔑 מפתחות API</h2>
-            <div class="grid grid-cols-3 gap-4">
-                <div>
-                    <label class="block mb-2">Whisper API Key</label>
-                    <div class="flex">
-                        <input type="password" id="whisperApiKey" class="w-full p-2 border rounded" placeholder="מפתח Whisper">
-                        <button onclick="window.open('https://platform.openai.com/account/api-keys', '_blank')" class="ml-2 bg-blue-500 text-white p-2 rounded">
-                            צור
-                        </button>
-                    </div>
-                </div>
-                <div>
-                    <label class="block mb-2">Google API Key</label>
-                    <div class="flex">
-                        <input type="password" id="googleApiKey" class="w-full p-2 border rounded" placeholder="מפתח Google">
-                        <button onclick="window.open('https://console.cloud.google.com/apis/credentials', '_blank')" class="ml-2 bg-green-500 text-white p-2 rounded">
-                            צור
-                        </button>
-                    </div>
-                </div>
-                <div>
-                    <label class="block mb-2">Groq API Key</label>
-                    <div class="flex">
-                        <input type="password" id="groqApiKey" class="w-full p-2 border rounded" placeholder="מפתח Groq">
-                        <button onclick="window.open('https://console.groq.com/keys', '_blank')" class="ml-2 bg-purple-500 text-white p-2 rounded">
-                            צור
-                        </button>
-                    </div>
-                </div>
+<body>
+    <div id="app" class="container">
+        <h1>Super Texter</h1>
+        <div id="transcriptionPanel">
+            <div class="input-methods">
+                <button id="fileUploadBtn">העלאת קובץ</button>
+                <button id="recordBtn">הקלטה</button>
+                <input type="file" id="audioFileInput" accept="audio/*" style="display:none;">
             </div>
-        </div>
-
-        <!-- בחירת שיטת קלט -->
-        <div class="bg-white shadow-md rounded-lg p-6 mb-4">
-            <h2 class="text-xl font-semibold mb-4">📥 בחירת שיטת קלט</h2>
-            <div class="grid grid-cols-3 gap-4">
-                <button onclick="selectInputMethod('file')" class="bg-blue-500 text-white p-3 rounded hover:bg-blue-600">
-                    העלאת קובץ
-                </button>
-                <button onclick="selectInputMethod('microphone')" class="bg-green-500 text-white p-3 rounded hover:bg-green-600">
-                    הקלדה מהמיקרופון
-                </button>
-                <button onclick="selectInputMethod('realtime')" class="bg-purple-500 text-white p-3 rounded hover:bg-purple-600">
-                    הקלדה בזמן אמת
-                </button>
-            </div>
-        </div>
-
-        <!-- קלט קבצים עם כפתור שליחה -->
-        <div id="fileInputSection" class="hidden bg-white shadow-md rounded-lg p-6 mb-4">
-            <input type="file" id="audioFile" accept="audio/*" class="w-full mb-4">
-            <button onclick="processFileInput()" class="w-full bg-green-500 text-white p-3 rounded hover:bg-green-600">
-                שלח קובץ לתמלול
-            </button>
-            <div id="fileInfo" class="mt-2 text-sm text-gray-600"></div>
-        </div>
-
-        <!-- קלט מיקרופון עם כפתור שליחה -->
-        <div id="microphoneInputSection" class="hidden bg-white shadow-md rounded-lg p-6 mb-4">
-            <div class="flex justify-between items-center mb-4">
-                <button id="startRecording" onclick="startMicrophoneRecording()" class="bg-green-500 text-white p-3 rounded">
-                    התחל הקלטה
-                </button>
-                <button id="stopRecording" onclick="stopMicrophoneRecording()" class="bg-red-500 text-white p-3 rounded" disabled>
-                    עצור הקלטה
-                </button>
-            </div>
-            <button onclick="processMicrophoneInput()" class="w-full bg-blue-500 text-white p-3 rounded mt-2">
-                שלח הקלטה לתמלול
-            </button>
-            <div id="recordingTimer" class="text-center text-xl mt-4">00:00</div>
-        </div>
-
-        <!-- הקלדה בזמן אמת עם כפתור שליחה -->
-        <div id="realtimeInputSection" class="hidden bg-white shadow-md rounded-lg p-6 mb-4">
-            <textarea id="realtimeText" class="w-full h-40 p-2 border rounded mb-4" 
-                     placeholder="התחל להקליד כאן..."></textarea>
-            <button onclick="processRealtimeInput()" class="w-full bg-purple-500 text-white p-3 rounded">
-                שלח טקסט לתמלול
-            </button>
-            <div id="realtimeTranscription" class="mt-4 bg-gray-100 p-2 rounded"></div>
-        </div>
-
-        <!-- הגדרות מתקדמות -->
-        <div class="bg-white shadow-md rounded-lg p-6 mb-4">
-            <h2 class="text-xl font-semibold mb-4">⚙️ הגדרות מתקדמות</h2>
-            <div class="grid grid-cols-3 gap-4">
-                <div>
-                    <label class="block mb-2">שפת מקור</label>
-                    <select id="sourceLanguage" class="w-full p-2 border rounded">
-                        <option value="auto">זיהוי אוטומטי</option>
-                        <option value="he">עברית</option>
-                        <option value="en">אנגלית</option>
-                    </select>
+            <div id="transcriptionResult" class="hidden">
+                <h2>תוצאות התמלול</h2>
+                <pre id="transcriptionText"></pre>
+                <div class="actions">
+                    <button id="copyBtn">העתק</button>
+                    <button id="downloadBtn">הורד</button>
                 </div>
-                <div>
-                    <label class="block mb-2">איכות תמלול</label>
-                    <select id="transcriptionQuality" class="w-full p-2 border rounded">
-                        <option value="high">איכות גבוהה</option>
-                        <option value="medium">איכות בינונית</option>
-                        <option value="fast">מהירות מקסימלית</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block mb-2">מנוע תמלול</label>
-                    <select id="transcriptionEngine" class="w-full p-2 border rounded">
-                        <option value="whisper">Whisper</option>
-                        <option value="google">Google</option>
-                        <option value="groq">Groq</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <!-- תוצאות -->
-        <div id="resultSection" class="hidden bg-white shadow-md rounded-lg p-6">
-            <h3 class="font-bold mb-4">תוצאות התמלול</h3>
-            <div id="transcriptionResult" class="bg-gray-50 p-4 rounded mb-4 whitespace-pre-wrap"></div>
-            <div class="flex gap-2">
-                <button onclick="copyResult()" class="flex-1 bg-gray-500 text-white p-2 rounded">העתק</button>
-                <button onclick="downloadResult()" class="flex-1 bg-green-500 text-white p-2 rounded">הורד</button>
             </div>
         </div>
     </div>
-
-    <script>
-        // פונקציות עיבוד קלט
-        function processFileInput() {
-            const file = document.getElementById('audioFile').files[0];
-            if (!file) {
-                alert('אנא בחר קובץ');
-                return;
-            }
-            showTranscriptionResult('מעבד קובץ: ' + file.name);
-        }
-
-        function processMicrophoneInput() {
-            if (audioChunks.length === 0) {
-                alert('אנא בצע הקלטה תחילה');
-                return;
-            }
-            showTranscriptionResult('מעבד הקלטה: ' + audioChunks.length + ' קטעים');
-        }
-
-        function processRealtimeInput() {
-            const text = document.getElementById('realtimeText').value;
-            if (!text) {
-                alert('אנא הקלד טקסט');
-                return;
-            }
-            showTranscriptionResult('מעבד טקסט: ' + text.length + ' תווים');
-        }
-
-        // שאר הפונקציות נשארות זהות לקוד הקודם
-        function selectInputMethod(method) {
-            ['fileInputSection', 'microphoneInputSection', 'realtimeInputSection']
-                .forEach(id => document.getElementById(id).classList.add('hidden'));
-            
-            document.getElementById(`${method}InputSection`).classList.remove('hidden');
-        }
-
-        // הוספת פונקציות נוספות מהקוד הקודם...
-        
-        function showTranscriptionResult(text) {
-            const resultSection = document.getElementById('resultSection');
-            const transcriptionResult = document.getElementById('transcriptionResult');
-            
-            transcriptionResult.textContent = text;
-            resultSection.classList.remove('hidden');
-        }
-
-        function copyResult() {
-            const text = document.getElementById('transcriptionResult').textContent;
-            navigator.clipboard.writeText(text).then(() => {
-                alert('הטקסט הועתק בהצלחה');
-            });
-        }
-
-        function downloadResult() {
-            const text = document.getElementById('transcriptionResult').textContent;
-            const blob = new Blob([text], {type: 'text/plain'});
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'transcription.txt';
-            link.click();
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
