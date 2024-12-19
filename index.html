@@ -9,12 +9,31 @@
 <body>
     <div id="app" class="container">
         <h1>Super Texter</h1>
+        
+        <div id="apiKeyManager" class="api-key-section">
+            <h2>ניהול API Key</h2>
+            <div class="api-key-input">
+                <input type="password" id="apiKeyInput" placeholder="הזן API Key">
+                <button id="saveApiKeyBtn">שמור מפתח</button>
+                <a href="https://console.groq.com/keys" target="_blank" class="get-api-key-link">
+                    קבל מפתח API חדש
+                </a>
+            </div>
+            <div id="apiKeyStatus" class="api-key-status"></div>
+        </div>
+
         <div id="transcriptionPanel">
             <div class="input-methods">
                 <button id="fileUploadBtn">העלאת קובץ</button>
                 <button id="recordBtn">הקלטה</button>
                 <input type="file" id="audioFileInput" accept="audio/*" style="display:none;">
             </div>
+            
+            <div id="progressContainer" class="progress-container hidden">
+                <div id="progressBar" class="progress-bar"></div>
+                <div id="progressText" class="progress-text"></div>
+            </div>
+
             <div id="transcriptionResult" class="hidden">
                 <h2>תוצאות התמלול</h2>
                 <pre id="transcriptionText"></pre>
