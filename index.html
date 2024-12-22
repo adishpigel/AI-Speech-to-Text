@@ -1,97 +1,65 @@
+
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Super Texter - תמלול אודיו מתקדם</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Speech to Text - תמלול חכם</title>
+    
+    <!-- External CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link href="src/styles/main.css" rel="stylesheet">
+    
+    <!-- Meta tags -->
+    <meta name="description" content="מערכת לתמלול אודיו באמצעות בינה מלאכותית">
+    <meta name="keywords" content="תמלול, AI, אודיו, דיבור לטקסט">
 </head>
-<body>
-    <div class="app-container">
-        <header>
-            <h1>Super Texter</h1>
-            <button id="helpButton" class="help-button" title="מדריך למשתמש">
-                <i class="fas fa-question-circle"></i>
-            </button>
+<body class="bg-gray-50">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">AI Speech to Text</h1>
+            <p class="text-gray-600">המרת דיבור לטקסט בעזרת בינה מלאכותית</p>
         </header>
 
-        <!-- מודל API Key -->
-        <div id="apiKeyModal" class="modal">
-            <div class="modal-content">
-                <span class="close-button">&times;</span>
-                <h2>הגדרת API Key</h2>
-                <input type="password" id="apiKeyInput" placeholder="הזן את המפתח שלך">
-                <div class="api-sources">
-                    <a href="https://console.groq.com/keys" target="_blank" class="api-source">
-                        <i class="fab fa-grunt"></i> Groq
-                    </a>
-                    <a href="https://platform.openai.com/account/api-keys" target="_blank" class="api-source">
-                        <i class="fab fa-openai"></i> OpenAI
-                    </a>
-                </div>
-                <button id="saveApiKeyBtn">שמור מפתח</button>
-                <div id="apiKeyStatus" class="status-message"></div>
-            </div>
-        </div>
+        <!-- Main Content -->
+        <main>
+            <!-- API Module -->
+            <div id="apiModule" class="mb-8"></div>
 
-        <!-- מודל עזרה -->
-        <div id="helpModal" class="modal">
-            <div class="modal-content">
-                <span class="close-button">&times;</span>
-                <h2>מדריך למשתמש</h2>
-                <div class="help-steps">
-                    <div class="help-step">
-                        <i class="fas fa-key"></i>
-                        <h3>שלב 1: API Key</h3>
-                        <p>הגדר API Key מ-Groq או OpenAI לביצוע תמלול</p>
-                    </div>
-                    <div class="help-step">
-                        <i class="fas fa-upload"></i>
-                        <h3>שלב 2: העלאת קובץ</h3>
-                        <p>העלה קובץ אודיו או הקלט ישירות מהמיקרופון</p>
-                    </div>
-                    <div class="help-step">
-                        <i class="fas fa-magic"></i>
-                        <h3>שלב 3: תמלול</h3>
-                        <p>קבל תמליל מדויק עם אפשרויות עריכה והורדה</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+            <!-- Recording Module -->
+            <div id="recordingModule" class="mb-8"></div>
 
-        <!-- פאנל תמלול -->
-        <div class="transcription-panel">
-            <div class="input-methods">
-                <button id="fileUploadBtn" class="method-btn">
-                    <i class="fas fa-file-upload"></i> העלאת קובץ
-                </button>
-                <button id="recordBtn" class="method-btn">
-                    <i class="fas fa-microphone"></i> הקלטה
-                </button>
-                <input type="file" id="audioFileInput" accept="audio/*" style="display:none;">
-            </div>
+            <!-- File Upload Module -->
+            <div id="fileUploadModule" class="mb-8"></div>
 
-            <div id="progressContainer" class="progress-container hidden">
-                <div id="progressBar" class="progress-bar"></div>
-                <div id="progressText" class="progress-text"></div>
-            </div>
+            <!-- Results Module -->
+            <div id="resultsModule" class="mb-8"></div>
+        </main>
 
-            <div id="transcriptionResult" class="transcription-result hidden">
-                <h2>תוצאות התמלול</h2>
-                <div class="result-actions">
-                    <button id="copyBtn" class="action-btn">
-                        <i class="fas fa-copy"></i> העתק
-                    </button>
-                    <button id="downloadBtn" class="action-btn">
-                        <i class="fas fa-download"></i> הורד
-                    </button>
-                </div>
-                <pre id="transcriptionText" class="transcription-text"></pre>
-            </div>
+        <!-- Footer -->
+        <footer class="text-center text-gray-600 text-sm">
+            <p>Powered by Groq API</p>
+        </footer>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
+        <div class="bg-white p-6 rounded-lg shadow-xl">
+            <div class="loading-spinner mb-4"></div>
+            <p id="loadingText" class="text-center">מעבד...</p>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Scripts -->
+    <script src="src/config.js"></script>
+    <script src="src/modules/apiModule.js"></script>
+    <script src="src/modules/recordingModule.js"></script>
+    <script src="src/modules/fileUploadModule.js"></script>
+    <script src="src/modules/resultsModule.js"></script>
+    <script src="src/main.js"></script>
 </body>
 </html>
