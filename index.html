@@ -1,25 +1,18 @@
-
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Speech to Text - תמלול חכם</title>
-    
-    <!-- External CSS -->
+    <title>AI Speech to Text</title>
+    <!-- Tailwind & Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
     <!-- Custom CSS -->
     <link href="src/styles/main.css" rel="stylesheet">
-    
-    <!-- Meta tags -->
-    <meta name="description" content="מערכת לתמלול אודיו באמצעות בינה מלאכותית">
-    <meta name="keywords" content="תמלול, AI, אודיו, דיבור לטקסט">
 </head>
 <body class="bg-gray-50">
     <div class="container mx-auto px-4 py-8 max-w-4xl">
-        <!-- Header -->
+        <!-- Header Section -->
         <header class="text-center mb-8">
             <h1 class="text-3xl font-bold text-gray-800 mb-2">AI Speech to Text</h1>
             <p class="text-gray-600">המרת דיבור לטקסט בעזרת בינה מלאכותית</p>
@@ -27,7 +20,7 @@
 
         <!-- Main Content -->
         <main>
-            <!-- API Module -->
+            <!-- API Configuration Module -->
             <div id="apiModule" class="mb-8"></div>
 
             <!-- Recording Module -->
@@ -46,16 +39,10 @@
         </footer>
     </div>
 
-    <!-- Loading Indicator -->
-    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
-        <div class="bg-white p-6 rounded-lg shadow-xl">
-            <div class="loading-spinner mb-4"></div>
-            <p id="loadingText" class="text-center">מעבד...</p>
-        </div>
-    </div>
-
-    <!-- Scripts -->
+    <!-- Load our modules -->
     <script src="src/config.js"></script>
+    <script src="src/utils/apiHelper.js"></script>
+    <script src="src/utils/audioHelper.js"></script>
     <script src="src/modules/apiModule.js"></script>
     <script src="src/modules/recordingModule.js"></script>
     <script src="src/modules/fileUploadModule.js"></script>
