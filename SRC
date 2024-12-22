@@ -1,0 +1,73 @@
+// Application Configuration
+const CONFIG = {
+    API: {
+        BASE_URL: 'https://api.groq.com/openai/v1/audio/transcriptions',
+        MODEL: 'whisper-large-v3',
+        CHUNK_SIZE: 25 * 1024 * 1024, // 25MB chunks
+    },
+
+    LANGUAGES: {
+        auto: 'זיהוי אוטומטי',
+        he: 'עברית',
+        en: 'אנגלית',
+        ar: 'ערבית',
+        ru: 'רוסית',
+        fr: 'צרפתית',
+        es: 'ספרדית',
+        de: 'גרמנית'
+    },
+
+    QUALITY_LEVELS: {
+        high: {
+            name: 'איכות גבוהה',
+            temperature: 0,
+            prompt: 'תמלל בדיוק מרבי עם סימני פיסוק'
+        },
+        balanced: {
+            name: 'איכות מאוזנת',
+            temperature: 0.2,
+            prompt: 'תמלל באופן טבעי'
+        },
+        fast: {
+            name: 'מהירות מרבית',
+            temperature: 0.4,
+            prompt: ''
+        }
+    },
+
+    FORMATS: {
+        text: 'טקסט רגיל',
+        srt: 'כתוביות SRT',
+        json: 'JSON'
+    },
+
+    // UI Configuration
+    UI: {
+        THEME: {
+            light: {
+                background: '#f3f4f6',
+                text: '#1f2937',
+                primary: '#3b82f6'
+            },
+            dark: {
+                background: '#1f2937',
+                text: '#f3f4f6',
+                primary: '#60a5fa'
+            }
+        },
+        ANIMATIONS: {
+            duration: '0.3s',
+            timing: 'ease-in-out'
+        }
+    },
+
+    // Storage Keys
+    STORAGE: {
+        API_KEY: 'groqApiKey',
+        SETTINGS: 'appSettings',
+        THEME: 'appTheme'
+    }
+};
+
+// Prevent modifications to config
+Object.freeze(CONFIG);
